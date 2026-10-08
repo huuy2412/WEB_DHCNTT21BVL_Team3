@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý danh mục món ăn</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+</head>
+
+<body class="bg-light">
+    <!-- Thanh menu -->
+    <nav class="navbar navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand fw-bold" th:href="@{/categories}">
+                FOOD ORDER
+            </a>
+            <span class="navbar-text text-white">
+                Quản lý danh mục
+            </span>
+        </div>
+    </nav>
+    <!-- Nội dung chính -->
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white p-3">
+                <h4 class="mb-0">
+                    Danh sách danh mục món ăn
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên danh mục</th>
+                                <th>Mô tả</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <!-- Duyet danh sach tu database -->
+                            <tr th:each="category : ${categories}">
+                                <td th:text="${category.id}"></td>
+                                <td th:text="${category.name}"></td>
+                                <td th:text="${category.description}"></td>
+                            </tr>
+                            <!-- Neu khong co du lieu -->
+                            <tr th:if="${#lists.isEmpty(categories)}">
+                                <td colspan="3" class="text-center text-muted">
+                                    Chưa có danh mục nào!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

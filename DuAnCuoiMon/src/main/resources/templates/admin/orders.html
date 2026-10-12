@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý đơn hàng - FOOD ORDER</title>
+<!-- CSS CHUNG ADMIN : nếu auto format thì cần chinh lại async funtion, >= -->
+<link rel="stylesheet" th:href="@{/css/admin.css}">
+<style>
+/* ===================================== GIAO DIEN QUAN LY DON HANG ===================================== */
+.order-breadcrumb {
+	font-size: 11px;
+	color: #8397aa;
+	margin-bottom: 12px;
+}
+
+.order-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.order-heading h1 {
+	color: #30485f;
+	font-size: 21px;
+	margin: 0 0 6px;
+	font-weight: bold;
+}
+
+.order-heading p {
+	color: #8497aa;
+	font-size: 11px;
+	margin: 0;
+}
+
+.order-year {
+	border: 1px solid #d4dee8;
+	background: white;
+	padding: 9px 13px;
+	color: #6b8197;
+	font-size: 11px;
+}
+
+/* BON O THONG KE */
+.order-stats {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.order-stat {
+	background: white;
+	border: 1px solid #d8e0ea;
+	padding: 18px;
+	min-height: 98px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.order-stat-icon {
+	width: 47px;
+	height: 47px;
+	flex-shrink: 0;
+	border: 1px solid #cfdae5;
+	background: #eef3f7;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 24px;
+	color: #557c9b;
+}
+
+.order-stat-label {
+	font-size: 12px;
+	color: #8498aa;
+	margin-bottom: 5px;
+}
+
+.order-stat-value {
+	font-size: 26px;
+	font-weight: bold;
+	color: #30485f;
+}
+
+/* KHUNG DANH SACH */
+.order-panel {
+	border: 1px solid #d8e0ea;
+	background: white;
+	margin-bottom: 12px;
+}
+
+.order-panel-head {
+	padding: 13px 15px;
+	border-bottom: 1px solid #dce4ec;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.order-panel-head strong {
+	color: #343d48;
+	font-size: 14px;
+}
+
+.order-panel-note {
+	font-size: 10px;
+	color: #90a5b8;
+}
+
+/* THANH CONG CU */
+.order-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding: 13px 14px;
+}
+
+.order-toolbar-left, .order-toolbar-right {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.order-toolbar-label {
+	font-size: 11px;
+	color: #526980;
+}
+
+.order-btn {
+	border: 1px solid #cdd9e4;
+	background: white;
+	color: #456c8d;
+	padding: 9px 12px;
+	font-size: 11px;
+	font-weight: bold;
+	border-radius: 0;
+	cursor: pointer;
+}
+
+.order-btn-primary {
+	background: #456f90;
+	border-color: #456f90;
+	color: white;
+}
+
+.order-btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.order-input, .order-select {
+	height: 32px;
+	border: 1px solid #cfdbe6;
+	background: white;
+	color: #526980;
+	padding: 6px 10px;
+	font-size: 11px;
+	border-radius: 0;
+}
+
+.order-input {
+	width: 185px;
+}
+
+.order-select {
+	min-width: 130px;
+}
+
+/* BANG DON HANG */
+.order-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.order-table {
+	border-collapse: collapse;
+	width: 100%;
+	min-width: 960px;
+	font-size: 11px;
+}
+
+.order-table th {
+	background: #e7edf3;
+	color: #366d98;
+	border: 1px solid #d5dfe9;
+	padding: 11px 10px;
+	text-align: left;
+}
+
+.order-table td {
+	border: 1px solid #e0e6ed;
+	color: #40556a;
+	padding: 12px 10px;
+	height: 46px;
+	vertical-align: middle;
+}
+
+.order-table tbody tr:nth-child(even) {
+	background: #f8fafc;
+}
+
+.order-code {
+	font-weight: bold;
+}
+
+.order-price {
+	font-weight: bold;
+}
+
+/* TRANG THAI */
+.order-status {
+	display: inline-block;
+	background: #f0f3f6;
+	border: 1px solid #d7e0e8;
+	border-left: 3px solid #aab7c4;
+	padding: 5px 8px;
+	font-size: 10px;
+	color: #5a7285;
+	white-space: nowrap;
+}
+
+.order-status.waiting {
+	border-left-color: #b6a077;
+}
+
+.order-status.preparing {
+	border-left-color: #7993b0;
+}
+
+.order-status.completed {
+	border-left-color: #74978d;
+}
+
+.order-status.cancelled {
+	border-left-color: #b68585;
+}
+
+/* CAC NUT THAO TAC */
+.order-actions {
+	display: flex;
+	gap: 5px;
+}
+
+.order-action {
+	border: 1px solid #cbd9e6;
+	background: white;
+	color: #376e96;
+	padding: 5px 7px;
+	font-size: 10px;
+	border-radius: 0;
+	cursor: pointer;
+}
+
+.order-action:hover:not(:disabled) {
+	background: #eaf2f8;
+}
+
+.order-action:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* PHAN TRANG */
+.order-pager {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	font-size: 10px;
+	color: #8397aa;
+}
+
+.order-pager-buttons {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.order-page-btn {
+	border: 1px solid #cfdae5;
+	background: white;
+	color: #567a98;
+	padding: 5px 9px;
+	cursor: pointer;
+}
+
+.order-page-btn.current {
+	background: #456f90;
+	color: white;
+}
+
+.order-page-btn:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* THONG TIN DUOI TRANG */
+.order-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 11px;
+	padding: 13px;
+}
+
+.order-info-box {
+	border: 1px solid #dce3eb;
+	background: #f8f9fb;
+	padding: 15px 14px;
+	min-height: 80px;
+}
+
+.order-info-box strong {
+	display: block;
+	color: #405d77;
+	font-size: 12px;
+	margin-bottom: 8px;
+}
+
+.order-info-box p {
+	color: #8295a6;
+	font-size: 11px;
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* HOP THOAI CHI TIET */
+.order-modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(20, 35, 50, 0.5);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+	padding: 16px;
+}
+
+.order-modal.open {
+	display: flex;
+}
+
+.order-modal-box {
+	width: 100%;
+	max-width: 520px;
+	max-height: 90vh;
+	overflow-y: auto;
+	background: white;
+	border: 1px solid #cfdae5;
+}
+
+.order-modal-body {
+	padding: 20px;
+	color: #40556a;
+	font-size: 12px;
+	line-height: 2;
+}
+
+.order-modal-body strong {
+	color: #30485f;
+}
+
+.order-modal-footer {
+	padding: 12px 18px;
+	border-top: 1px solid #dce3ec;
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* THONG BAO */
+.order-flash {
+	padding: 12px 15px;
+	margin-bottom: 15px;
+	font-size: 12px;
+	border: 1px solid;
+}
+
+.order-flash-success {
+	background: #edf7f0;
+	border-color: #a9d5b4;
+	color: #287344;
+}
+
+.order-flash-error {
+	background: #fff1f1;
+	border-color: #e5b6b6;
+	color: #a63f3f;
+}
+
+@media ( max-width : 950px) {
+	.order-stats {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.order-info-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media ( max-width : 600px) {
+	.order-stats {
+		grid-template-columns: 1fr;
+	}
+	.order-pager {
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+}
+
+/* ========================================
+   FORM TAO DON HANG MOI
+   ======================================== */
+.order-create-box {
+	max-width: 750px;
+}
+
+.order-create-fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	line-height: 1.5;
+}
+
+.order-create-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	min-width: 0;
+}
+
+.order-create-full {
+	grid-column: 1/-1;
+}
+
+.order-create-field label {
+	color: #405d77;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.order-create-field input, .order-create-field select,
+	.order-create-field textarea {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid #cfdae5;
+	border-radius: 0;
+	background: white;
+	color: #40556a;
+	font-family: inherit;
+	font-size: 12px;
+}
+
+.order-create-field input:focus, .order-create-field select:focus,
+	.order-create-field textarea:focus {
+	outline: 1px solid #456f90;
+}
+
+.order-create-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 85px 115px 42px;
+	gap: 8px;
+	align-items: end;
+	margin-bottom: 10px;
+}
+
+.order-create-subtotal {
+	height: 36px;
+	display: flex;
+	align-items: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #405d77;
+}
+
+.order-create-remove {
+	height: 36px;
+	padding: 0;
+}
+
+.order-create-total {
+	border-top: 1px solid #dce4ec;
+	padding-top: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	color: #30485f;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.order-create-total strong {
+	font-size: 20px;
+	color: #376e96;
+}
+
+@media ( max-width : 600px) {
+	.order-create-fields {
+		grid-template-columns: 1fr;
+	}
+	.order-create-item {
+		grid-template-columns: minmax(0, 1fr) 80px;
+	}
+	.order-create-subtotal {
+		height: auto;
+	}
+	.order-create-remove {
+		height: 34px;
+	}
+}
+
+/* ========================================
+   BANG CHI TIET MON AN TRONG DON HANG
+   ======================================== */
+
+/* Mo rong hop thoai Chi tiet */
+#orderDetailModal .order-modal-box {
+	max-width: 760px;
+}
+
+/* Khoang cach voi thong tin don hang */
+.order-detail-items {
+	margin-top: 18px;
+	border-top: 1px solid #dce4ec;
+	padding-top: 14px;
+}
+
+.order-detail-items h3 {
+	font-size: 13px;
+	color: #30485f;
+	margin: 0 0 12px;
+}
+
+/* Cho phep cuon ngang neu man hinh nho */
+.order-detail-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+}
+
+/* Bang danh sach mon */
+.order-detail-table {
+	width: 100%;
+	min-width: 510px;
+	border-collapse: collapse;
+	font-size: 11px;
+}
+
+.order-detail-table th {
+	background: #e7edf3;
+	color: #366d98;
+	border: 1px solid #d5dfe9;
+	padding: 9px 8px;
+	text-align: left;
+}
+
+.order-detail-table td {
+	border: 1px solid #e0e6ed;
+	color: #40556a;
+	padding: 9px 8px;
+	line-height: 1.5;
+}
+
+.order-detail-table tbody tr:nth-child(even) {
+	background: #f8fafc;
+}
+
+/* Tong tien */
+.order-detail-total {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-top: 12px;
+	padding: 12px 4px;
+	border-top: 1px solid #dce4ec;
+	color: #405d77;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.order-detail-total strong {
+	color: #376e96;
+	font-size: 17px;
+}
+</style>
+</head>
+
+<body class="admin-page">
+
+	<!-- =====================================
+         HEADER ADMIN
+         ===================================== -->
+
+	<header class="admin-topbar">
+
+		<div class="admin-brand">
+
+			<div class="brand-icon">✳</div>
+
+			<div>
+				<div class="brand-title">
+					Food<span>Order</span>
+				</div>
+
+				<div class="brand-subtitle">Hệ thống quản lý nhà hàng •
+					Restaurant Management</div>
+			</div>
+
+		</div>
+
+		<div class="admin-search">
+
+			<input type="search" placeholder="Tìm nhanh món ăn, đơn hàng"
+				disabled>
+
+			<button type="button" disabled>⌕</button>
+
+		</div>
+
+		<div class="admin-actions">
+
+			<div class="admin-action">
+				Hôm nay: <span class="time" id="adminClock"></span>
+			</div>
+
+			<div class="admin-action">●</div>
+
+			<div class="admin-action">⚙ Cài đặt</div>
+
+			<div class="admin-action">● Admin</div>
+
+		</div>
+
+	</header>
+
+	<!-- =====================================  MENU NGANG ADMIN ===================================== -->
+	<nav class="admin-nav">
+		<a class=""
+			th:href="@{/admin}"> ▫ Tổng quan </a> 
+		<a class="active"
+			th:href="@{/admin/orders}"> ▤ Đơn hàng </a> 
+		<a class=""
+			th:href="@{/admin/categories}"> ▦ Danh mục </a> 
+		<a class=""
+			th:href="@{/admin/products}"> ▣ Món ăn </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Nhân viên </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Người dùng </a> 
+		<a href="#"
+			onclick="return false;"> ▦ Bàn ăn </a> 
+		<a href="#"
+			onclick="return false;"> $ Thanh toán </a> 
+		<a href="#"
+			onclick="return false;"> ▥ Báo cáo </a>
+	</nav>
+
+	<!-- ===================================== NOI DUNG CHINH ===================================== -->
+	<main class="admin-main">
+		<!-- DUONG DAN -->
+		<div class="order-breadcrumb">Trang chủ / Admin / Quản lý đơn
+			hàng</div>
+
+		<!-- TIEU DE -->
+		<div class="order-heading">
+			<div>
+				<h1>▤ QUẢN LÝ ĐƠN HÀNG</h1>
+				<p>Danh sách và xử lý đơn đặt thức ăn online hoặc tại quán</p>
+			</div>
+
+			<div class="order-year" th:text="|Năm ${reportYear} ▾|">Năm
+				2026 ▾</div>
+
+		</div>
+
+		<!-- THONG BAO -->
+
+		<div class="order-flash order-flash-success" th:if="${success}"
+			th:text="${success}" role="status">Thao tác thành công!</div>
+
+		<div class="order-flash order-flash-error" th:if="${error}"
+			th:text="${error}" role="alert">Có lỗi xảy ra!</div>
+
+		<!-- =====================================
+             BON O THONG KE
+             ===================================== -->
+
+		<div class="order-stats">
+
+			<!-- TONG DON -->
+
+			<div class="order-stat">
+
+				<div class="order-stat-icon">▤</div>
+
+				<div>
+
+					<div class="order-stat-label">Tổng số đơn</div>
+
+					<div class="order-stat-value" th:text="${totalOrders}">0</div>
+
+				</div>
+
+			</div>
+
+			<!-- CHO XAC NHAN -->
+
+			<div class="order-stat">
+
+				<div class="order-stat-icon">◷</div>
+
+				<div>
+
+					<div class="order-stat-label">Chờ xác nhận</div>
+
+					<div class="order-stat-value" th:text="${pendingOrders}">0</div>
+
+				</div>
+
+			</div>
+
+			<!-- DANG CHE BIEN -->
+
+			<div class="order-stat">
+
+				<div class="order-stat-icon">▥</div>
+
+				<div>
+
+					<div class="order-stat-label">Đang chế biến</div>
+
+					<div class="order-stat-value" th:text="${preparingOrders}">0
+					</div>
+
+				</div>
+
+			</div>
+
+			<!-- HOAN THANH -->
+
+			<div class="order-stat">
+
+				<div class="order-stat-icon">✓</div>
+
+				<div>
+
+					<div class="order-stat-label">Hoàn thành</div>
+
+					<div class="order-stat-value" th:text="${completedOrders}">0
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- =====================================
+             DANH SACH DON HANG
+             ===================================== -->
+
+		<section class="order-panel">
+
+			<div class="order-panel-head">
+
+				<strong>▤ Danh sách đơn hàng</strong> <span class="order-panel-note">
+					Dữ liệu từ MySQL </span>
+
+			</div>
+
+			<!-- THANH CONG CU -->
+
+			<div class="order-toolbar">
+
+				<div class="order-toolbar-left">
+
+					<!-- TAO DON: SE LAM O BUOC SAU -->
+					<button type="button" class="order-btn order-btn-primary"
+						id="openCreateOrder">+ Tạo đơn mới</button>
+
+					<button type="button" class="order-btn" id="resetOrderFilters">
+						↻ Làm mới bộ lọc</button>
+				</div>
+
+				<div class="order-toolbar-right">
+					<span class="order-toolbar-label"> Tìm kiếm: </span>
+
+					<!-- TIM KIEM -->
+					<input type="search" id="orderSearch" class="order-input"
+						placeholder="Mã đơn, khách hàng...">
+
+					<!-- LOC TRANG THAI -->
+					<select id="orderStatusFilter" class="order-select">
+						<option value="all">Tất cả trạng thái</option>
+						<option value="PENDING">Chờ xác nhận</option>
+						<option value="PREPARING">Đang chế biến</option>
+						<option value="COMPLETED">Hoàn thành</option>
+						<option value="CANCELLED">Đã hủy</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- =====================================
+                 BANG DON HANG MYSQL
+                 ===================================== -->
+			<div class="order-table-wrap">
+
+				<table class="order-table">
+
+					<thead>
+						<tr>
+							<th>Mã đơn</th>
+							<th>Khách hàng</th>
+							<th>Hình thức</th>
+							<th>Tổng tiền</th>
+							<th>Trạng thái</th>
+							<th>Ngày đặt</th>
+							<th>Thao tác</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						<!-- LAP QUA DANH SACH DON HANG -->
+
+						<tr class="order-data-row" th:each="order : ${orders}"
+							th:data-status="${order.status}">
+
+							<!-- MA DON -->
+
+							<td class="order-code"
+								th:text="${'DH' + #numbers.formatInteger(order.id, 3)}">
+								DH001</td>
+
+							<!-- KHACH HANG -->
+
+							<td class="order-customer"
+								th:text="${order.customer != null ? order.customer.name : 'Khách vãng lai'}">
+								Nguyễn Văn An</td>
+
+							<!-- HINH THUC -->
+
+							<td class="order-type"
+								th:text="${order.orderType == 'ONLINE' ? 'Online' : (order.orderType == 'DINE_IN' or order.orderType == 'AT_RESTAURANT' ? 'Tại quán' : (order.orderType != null ? order.orderType : '—'))}">
+								Online</td>
+
+							<!-- TONG TIEN -->
+
+							<td class="order-price"
+								th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+								285.000đ</td>
+
+							<!-- TRANG THAI -->
+
+							<td><span class="order-status waiting"
+								th:if="${order.status == 'PENDING'}"> Chờ xác nhận </span> <span
+								class="order-status preparing"
+								th:if="${order.status == 'PREPARING'}"> Đang chế biến </span> <span
+								class="order-status completed"
+								th:if="${order.status == 'COMPLETED'}"> Hoàn thành </span> <span
+								class="order-status cancelled"
+								th:if="${order.status == 'CANCELLED'}"> Đã hủy </span> <span
+								class="order-status"
+								th:if="${order.status == null or (order.status != 'PENDING' and order.status != 'PREPARING' and order.status != 'COMPLETED' and order.status != 'CANCELLED')}"
+								th:text="${order.status != null ? order.status : 'Chưa có trạng thái'}">
+									Khác </span></td>
+
+							<!-- NGAY DAT -->
+
+							<td class="order-date"
+								th:text="${order.orderTime != null ? #temporals.format(order.orderTime, 'dd/MM/yyyy HH:mm') : '—'}">
+								08/10/2026</td>
+
+							<!-- THAO TAC -->
+
+							<td>
+
+								<div class="order-actions">
+
+									<!-- CHI TIET -->
+
+									<button type="button" class="order-action order-detail-btn"
+										th:data-id="${order.id}"
+										th:data-phone="${order.customer != null ? order.customer.phone : ''}"
+										th:data-address="${order.customer != null ? order.customer.address : ''}"
+										th:data-note="${order.note}"
+										th:data-delivery-address="${order.deliveryAddress}"
+										th:data-table="${order.restaurantTable != null ? 'Có bàn được gán' : 'Chưa gán bàn'}">Chi
+										tiết</button>
+
+									<!-- NUT SUA TRANG THAI DON HANG -->
+									<button type="button" class="order-action order-edit-btn"
+										th:data-id="${order.id}"
+										th:data-customer="${order.customer != null ? order.customer.name : 'Khách vãng lai'}"
+										th:data-status="${order.status}"
+										th:disabled="${order.status != 'PENDING' and order.status != 'PREPARING'}"
+										title="Cập nhật trạng thái đơn hàng">Sửa</button>
+
+									<!-- NUT XOA DON HANG -->
+									<button type="button" class="order-action order-delete-btn"
+										th:data-id="${order.id}"
+										th:data-customer="${order.customer != null ? order.customer.name : 'Khách vãng lai'}"
+										th:disabled="${order.status != 'CANCELLED'}"
+										title="Xóa đơn hàng đã hủy">Xóa</button>
+
+
+								</div>
+
+							</td>
+
+						</tr>
+
+						<!-- KHONG CO KET QUA -->
+
+						<tr id="orderEmptyRow" style="display: none;">
+
+							<td colspan="7" style="text-align: center; padding: 22px;">
+								Không tìm thấy đơn hàng phù hợp.</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<!-- =====================================
+                 PHAN TRANG
+                 ===================================== -->
+
+			<div class="order-pager">
+
+				<span id="orderRecordCount"> Hiển thị 0 đơn hàng </span>
+
+				<div class="order-pager-buttons">
+
+					<span id="orderPageInfo"> Trang 1/1 </span>
+
+					<button type="button" class="order-page-btn" id="orderPrevPage">
+						‹</button>
+
+					<button type="button" class="order-page-btn current"
+						id="orderCurrentPage" disabled>1</button>
+
+					<button type="button" class="order-page-btn" id="orderNextPage">
+						›</button>
+
+				</div>
+
+			</div>
+
+		</section>
+
+		<!-- =====================================
+             THONG TIN QUAN LY DON HANG
+             ===================================== -->
+
+		<section class="order-panel">
+
+			<div class="order-panel-head">
+
+				<strong> ▣ Thông tin quản lý đơn hàng </strong>
+
+			</div>
+
+			<div class="order-info-grid">
+
+				<div class="order-info-box">
+
+					<strong> Theo dõi đơn hàng </strong>
+
+					<p>Quản lý danh sách đơn online và tại quán, tìm kiếm theo
+						khách hàng và mã đơn.</p>
+
+				</div>
+
+				<div class="order-info-box">
+
+					<strong> Xử lý trạng thái </strong>
+
+					<p>Theo dõi chờ xác nhận, đang chế biến, hoàn thành và đã hủy.
+					</p>
+
+				</div>
+
+				<div class="order-info-box">
+
+					<strong> Chi tiết đơn hàng </strong>
+
+					<p>Xem thông tin khách hàng, tổng tiền, ngày đặt và hình thức
+						nhận món.</p>
+
+				</div>
+
+			</div>
+
+		</section>
+
+	</main>
+
+	<!-- =====================================
+         FOOTER
+         ===================================== -->
+
+	<footer class="admin-footer">
+
+		<span> © 2026 FOOD ORDER — Hệ thống quản lý nhà hàng </span> <span>
+			Quản lý Đơn hàng </span>
+
+	</footer>
+
+	<!-- =====================================
+         HOP THOAI CHI TIET DON HANG
+         ===================================== -->
+
+	<div class="order-modal" id="orderDetailModal" role="dialog"
+		aria-modal="true" aria-labelledby="orderDetailTitle">
+
+		<div class="order-modal-box">
+
+			<div class="order-panel-head">
+
+				<strong id="orderDetailTitle"> Chi tiết đơn hàng </strong>
+
+			</div>
+
+			<div class="order-modal-body">
+
+				<div>
+					<strong>Mã đơn:</strong> <span id="detailOrderCode"></span>
+				</div>
+
+				<div>
+					<strong>Khách hàng:</strong> <span id="detailOrderCustomer"></span>
+				</div>
+
+				<div>
+					<strong>Số điện thoại:</strong> <span id="detailOrderPhone"></span>
+				</div>
+
+				<div>
+					<strong>Địa chỉ khách hàng:</strong> <span id="detailOrderAddress"></span>
+				</div>
+
+				<div>
+					<strong>Hình thức đặt:</strong> <span id="detailOrderType"></span>
+				</div>
+
+				<div>
+					<strong>Bàn ăn:</strong> <span id="detailOrderTable"></span>
+				</div>
+
+				<div>
+					<strong>Ngày đặt:</strong> <span id="detailOrderDate"></span>
+				</div>
+
+				<div>
+					<strong>Tổng tiền:</strong> <span id="detailOrderPrice"></span>
+				</div>
+
+				<div>
+					<strong>Trạng thái:</strong> <span id="detailOrderStatus"></span>
+				</div>
+
+				<div>
+					<strong>Địa chỉ giao hàng:</strong> <span id="detailOrderDelivery"></span>
+				</div>
+
+				<div>
+					<strong>Ghi chú:</strong> <span id="detailOrderNote"></span>
+				</div>
+
+				<!-- ========================================
+     DANH SACH MON AN TRONG DON HANG
+     ======================================== -->
+
+				<div class="order-detail-items">
+
+					<h3>Danh sách món ăn đã đặt</h3>
+
+					<div class="order-detail-table-wrap">
+
+						<table class="order-detail-table">
+
+							<thead>
+								<tr>
+									<th>STT</th>
+									<th>Tên món ăn</th>
+									<th>Số lượng</th>
+									<th>Đơn giá</th>
+									<th>Thành tiền</th>
+								</tr>
+							</thead>
+
+							<tbody id="detailOrderItemsBody">
+
+								<tr>
+									<td colspan="5" style="text-align: center;">Đang tải món
+										ăn...</td>
+								</tr>
+
+							</tbody>
+
+						</table>
+
+					</div>
+
+					<!-- TONG TIEN CAC MON -->
+					<div class="order-detail-total">
+
+						<span>Tổng tiền các món:</span> <strong id="detailOrderItemsTotal">
+							— </strong>
+
+					</div>
+
+				</div>
+
+
+			</div>
+
+			<div class="order-modal-footer">
+
+				<button type="button" class="order-btn" id="closeOrderDetail">
+					Đóng</button>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- ========================================
+     HOP THOAI TAO DON HANG MOI
+     ======================================== -->
+
+	<div class="order-modal" id="createOrderModal" role="dialog"
+		aria-modal="true" aria-labelledby="createOrderTitle">
+
+		<div class="order-modal-box order-create-box">
+
+			<!-- TIEU DE -->
+			<div class="order-panel-head">
+				<strong id="createOrderTitle"> + Tạo đơn hàng mới </strong>
+			</div>
+
+			<!-- FORM GUI DU LIEU VE SPRING BOOT -->
+			<form th:action="@{/admin/orders/add}" method="post"
+				id="createOrderForm">
+
+				<div class="order-modal-body">
+
+					<div class="order-create-fields">
+
+						<!-- KHACH HANG -->
+						<div class="order-create-field">
+
+							<label for="createOrderCustomer"> Khách hàng * </label> <select
+								id="createOrderCustomer" name="customerId" required>
+
+								<option value="">-- Chọn khách hàng --</option>
+
+								<option th:each="customer : ${customers}"
+									th:value="${customer.id}" th:text="${customer.name}">
+									Nguyễn Văn An</option>
+
+							</select>
+
+						</div>
+
+						<!-- HINH THUC DAT -->
+						<div class="order-create-field">
+
+							<label for="createOrderType"> Hình thức đặt hàng * </label> <select
+								id="createOrderType" name="orderType" required>
+
+								<option value="DINE_IN">Tại quán</option>
+
+								<option value="DELIVERY">Online / Giao hàng</option>
+
+							</select>
+
+						</div>
+
+						<!-- CHON BAN AN -->
+						<div class="order-create-field" id="createOrderTableField">
+
+							<label for="createOrderTable"> Bàn ăn * </label> <select
+								id="createOrderTable" name="tableId">
+
+								<option value="">-- Chọn bàn ăn --</option>
+
+								<option th:each="table : ${tables}" th:value="${table.id}"
+									th:text="|Bàn ${table.id}|">Bàn 1</option>
+
+							</select>
+
+						</div>
+
+						<!-- DIA CHI GIAO HANG -->
+						<div class="order-create-field" id="createOrderDeliveryField"
+							style="display: none;">
+
+							<label for="createOrderDelivery"> Địa chỉ giao hàng * </label> <input
+								type="text" id="createOrderDelivery" name="deliveryAddress"
+								maxlength="255" placeholder="Nhập địa chỉ giao hàng">
+
+						</div>
+
+						<!-- GHI CHU -->
+						<div class="order-create-field order-create-full">
+
+							<label for="createOrderNote"> Ghi chú đơn hàng </label>
+
+							<textarea id="createOrderNote" name="note" rows="2"
+								maxlength="255" placeholder="Ví dụ: Ít cay, không hành..."></textarea>
+
+						</div>
+
+						<!-- DANH SACH MON AN -->
+						<div class="order-create-field order-create-full">
+
+							<label> Danh sách món ăn * </label>
+
+							<!-- CAC DONG MON AN -->
+							<div id="createOrderItems"></div>
+
+							<!-- NUT THEM MON -->
+							<div>
+								<button type="button" class="order-btn" id="addCreateOrderItem">
+									+ Thêm món ăn</button>
+							</div>
+
+						</div>
+
+						<!-- TONG TIEN -->
+						<div class="order-create-full order-create-total">
+
+							<span> Tổng tiền đơn hàng </span> <strong id="createOrderTotal">
+								0đ </strong>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<!-- NUT LUU VA HUY -->
+				<div class="order-modal-footer" style="gap: 8px;">
+
+					<button type="button" class="order-btn" id="cancelCreateOrder">
+						Hủy</button>
+
+					<button type="submit" class="order-btn order-btn-primary"
+						id="saveCreateOrder">Lưu đơn hàng</button>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+
+	<!-- ========================================
+     MAU MOT DONG MON AN
+     ======================================== -->
+
+	<template id="createOrderItemTemplate">
+
+		<div class="order-create-item">
+
+			<!-- CHON MON AN -->
+			<div class="order-create-field">
+
+				<label>Món ăn</label> <select name="productIds"
+					class="create-order-product" required>
+
+					<option value="">-- Chọn món ăn --</option>
+
+					<option th:each="product : ${products}" th:value="${product.id}"
+						th:data-price="${product.price}"
+						th:text="${product.name + ' - ' + #numbers.formatDecimal(product.price, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+						Sushi cá hồi - 65.000đ</option>
+
+				</select>
+
+			</div>
+
+			<!-- SO LUONG -->
+			<div class="order-create-field">
+
+				<label>Số lượng</label> <input type="number" name="quantities"
+					class="create-order-quantity" value="1" min="1" max="1000" step="1"
+					required>
+
+			</div>
+
+			<!-- THANH TIEN -->
+			<div class="order-create-field">
+
+				<label>Thành tiền</label> <span class="order-create-subtotal">
+					0đ </span>
+
+			</div>
+
+			<!-- NUT XOA DONG -->
+			<button type="button" class="order-btn order-create-remove"
+				title="Bỏ món này">×</button>
+
+		</div>
+
+	</template>
+
+	<!-- ========================================
+     HOP THOAI SUA TRANG THAI DON HANG
+     ======================================== -->
+
+	<div class="order-modal" id="editOrderModal" role="dialog"
+		aria-modal="true" aria-labelledby="editOrderTitle">
+
+		<div class="order-modal-box">
+
+			<!-- TIEU DE -->
+			<div class="order-panel-head">
+				<strong id="editOrderTitle"> Chỉnh sửa trạng thái đơn hàng
+				</strong>
+			</div>
+
+			<!-- FORM GUI VE SPRING BOOT -->
+			<form th:action="@{/admin/orders/update-status}" method="post"
+				id="editOrderForm">
+
+				<div class="order-modal-body">
+
+					<!-- ID DON HANG -->
+					<input type="hidden" id="editOrderId" name="orderId">
+
+					<!-- MA DON -->
+					<div style="margin-bottom: 12px;">
+						<strong>Mã đơn hàng:</strong> <span id="editOrderCode"></span>
+					</div>
+
+					<!-- TEN KHACH -->
+					<div style="margin-bottom: 12px;">
+						<strong>Khách hàng:</strong> <span id="editOrderCustomer"></span>
+					</div>
+
+					<!-- TRANG THAI HIEN TAI -->
+					<div style="margin-bottom: 16px;">
+						<strong>Trạng thái hiện tại:</strong> <span
+							id="editOrderCurrentStatus"></span>
+					</div>
+
+					<!-- TRANG THAI MOI -->
+					<div class="order-create-field">
+
+						<label for="editOrderNewStatus"> Chọn trạng thái mới * </label> <select
+							id="editOrderNewStatus" name="status" required>
+
+							<option value="">-- Chọn trạng thái --</option>
+
+						</select>
+
+					</div>
+
+					<!-- CANH BAO HUY DON -->
+					<p id="editOrderWarning"
+						style="display: none; color: #a63f3f; font-size: 11px; margin-top: 12px;">
+						Lưu ý: Đơn hàng sau khi hủy sẽ không thể chuyển lại trạng thái
+						khác.</p>
+
+				</div>
+
+				<!-- NUT CHUC NANG -->
+				<div class="order-modal-footer" style="gap: 8px;">
+
+					<button type="button" class="order-btn" id="cancelEditOrder">
+						Hủy</button>
+
+					<button type="submit" class="order-btn order-btn-primary"
+						id="saveEditOrder">Lưu thay đổi</button>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<!-- ========================================
+     HOP THOAI XAC NHAN XOA DON HANG
+     ======================================== -->
+
+	<div class="order-modal" id="deleteOrderModal" role="dialog"
+		aria-modal="true" aria-labelledby="deleteOrderTitle">
+
+		<div class="order-modal-box">
+
+			<!-- TIEU DE -->
+			<div class="order-panel-head">
+				<strong id="deleteOrderTitle"> Xác nhận xóa đơn hàng </strong>
+			</div>
+
+			<!-- FORM XOA -->
+			<form th:action="@{/admin/orders/delete}" method="post"
+				id="deleteOrderForm">
+
+				<div class="order-modal-body">
+
+					<!-- ID DON HANG -->
+					<input type="hidden" id="deleteOrderId" name="orderId">
+
+					<div style="margin-bottom: 12px;">
+						<strong>Mã đơn hàng:</strong> <span id="deleteOrderCode"></span>
+					</div>
+
+					<div style="margin-bottom: 12px;">
+						<strong>Khách hàng:</strong> <span id="deleteOrderCustomer"></span>
+					</div>
+
+					<div style="margin-bottom: 12px;">
+						<strong>Trạng thái:</strong> <span style="color: #a63f3f;">
+							Đã hủy </span>
+					</div>
+
+					<!-- CANH BAO -->
+					<div
+						style="background: #fff5f5; border: 1px solid #e5b6b6; padding: 12px; margin-top: 14px; color: #a63f3f; font-size: 12px; line-height: 1.7;">
+
+						Bạn có chắc chắn muốn xóa đơn hàng này?
+
+						<div style="margin-top: 6px;">Thao tác này sẽ xóa vĩnh viễn
+							đơn hàng và danh sách món ăn thuộc đơn hàng.</div>
+
+						<div style="margin-top: 6px;">Không thể khôi phục sau khi
+							xóa.</div>
+
+					</div>
+
+				</div>
+
+				<!-- CAC NUT -->
+				<div class="order-modal-footer" style="gap: 8px;">
+
+					<button type="button" class="order-btn" id="cancelDeleteOrder">
+						Không xóa</button>
+
+					<button type="submit" class="order-btn" id="confirmDeleteOrder"
+						style="background: #a94e4e; border-color: #a94e4e; color: white;">
+						Xác nhận xóa</button>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<!-- =====================================
+         JAVASCRIPT
+         ===================================== -->
+
+	<script>
+		// =====================================
+		// DONG HO ADMIN
+		// =====================================
+
+		function updateAdminClock() {
+
+			const now = new Date();
+
+			const date = [ String(now.getDate()).padStart(2, "0"),
+					String(now.getMonth() + 1).padStart(2, "0"),
+					now.getFullYear() ].join("-");
+
+			const time = [ String(now.getHours()).padStart(2, "0"),
+					String(now.getMinutes()).padStart(2, "0"),
+					String(now.getSeconds()).padStart(2, "0") ].join(":");
+
+			document.getElementById("adminClock").textContent = date + " "
+					+ time;
+		}
+
+		updateAdminClock();
+
+		setInterval(updateAdminClock, 1000);
+
+		// =====================================
+		// KHAI BAO THANH PHAN
+		// =====================================
+
+		const orderRows = Array.from(document
+				.querySelectorAll(".order-data-row"));
+
+		const orderSearch = document.getElementById("orderSearch");
+
+		const orderStatusFilter = document.getElementById("orderStatusFilter");
+
+		const orderEmptyRow = document.getElementById("orderEmptyRow");
+
+		const orderPrevPage = document.getElementById("orderPrevPage");
+
+		const orderNextPage = document.getElementById("orderNextPage");
+
+		// 10 don hang moi trang
+		const pageSize = 10;
+
+		let currentPage = 1;
+
+		// =====================================
+		// TIM KIEM, LOC VA PHAN TRANG
+		// =====================================
+
+		function renderOrders() {
+
+			const keyword = orderSearch.value.trim().toLocaleLowerCase("vi");
+
+			const status = orderStatusFilter.value;
+
+			// Loc danh sach
+			const filtered = orderRows
+					.filter(function(row) {
+
+						const code = row.querySelector(".order-code").textContent
+								.toLocaleLowerCase("vi");
+
+						const customer = row.querySelector(".order-customer").textContent
+								.toLocaleLowerCase("vi");
+
+						const matchKeyword = code.includes(keyword)
+								|| customer.includes(keyword);
+
+						const matchStatus = status === "all"
+								|| row.dataset.status === status;
+
+						return matchKeyword && matchStatus;
+					});
+
+			// Tinh so trang
+			const totalPages = Math.max(1, Math
+					.ceil(filtered.length / pageSize));
+
+			if (currentPage > totalPages) {
+				currentPage = totalPages;
+			}
+
+			// An tat ca dong
+			orderRows.forEach(function(row) {
+				row.style.display = "none";
+			});
+
+			// Hien thi 10 don cua trang hien tai
+			const start = (currentPage - 1) * pageSize;
+
+			filtered.slice(start, start + pageSize).forEach(function(row) {
+				row.style.display = "";
+			});
+
+			// Thong bao khong co ket qua
+			orderEmptyRow.style.display = filtered.length === 0 ? "" : "none";
+
+			// Cap nhat thong tin
+			document.getElementById("orderRecordCount").textContent = "Hiển thị "
+					+ filtered.length + " đơn hàng";
+
+			document.getElementById("orderPageInfo").textContent = "Trang "
+					+ currentPage + "/" + totalPages;
+
+			document.getElementById("orderCurrentPage").textContent = currentPage;
+
+			// Bat tat nut chuyen trang
+			orderPrevPage.disabled = currentPage
+			<= 1;
+
+            orderNextPage.disabled = currentPage >= totalPages;
+		}
+
+		// =====================================
+		// TIM KIEM DON HANG
+		// =====================================
+
+		orderSearch.addEventListener("input", function() {
+			currentPage = 1;
+			renderOrders();
+		});
+
+		// =====================================
+		// LOC TRANG THAI
+		// =====================================
+
+		orderStatusFilter.addEventListener("change", function() {
+
+			currentPage = 1;
+			renderOrders();
+
+		});
+
+		// =====================================
+		// TRANG TRUOC
+		// =====================================
+
+		orderPrevPage.addEventListener("click", function() {
+
+			if (currentPage > 1) {
+
+				currentPage--;
+				renderOrders();
+			}
+
+		});
+
+		// =====================================
+		// TRANG SAU
+		// =====================================
+
+		orderNextPage.addEventListener("click", function() {
+
+			currentPage++;
+			renderOrders();
+
+		});
+
+		// =====================================
+		// LAM MOI BO LOC
+		// =====================================
+
+		document.getElementById("resetOrderFilters").addEventListener("click",
+				function() {
+
+					orderSearch.value = "";
+					orderStatusFilter.value = "all";
+
+					currentPage = 1;
+					renderOrders();
+
+				});
+
+		// Hien thi danh sach khi tai trang
+		renderOrders();
+
+		// =====================================
+		// CHI TIET DON HANG
+		// =====================================
+
+		const orderDetailModal = document.getElementById("orderDetailModal");
+
+		const closeOrderDetailButton = document
+				.getElementById("closeOrderDetail");
+
+		document
+				.querySelectorAll(".order-detail-btn")
+				.forEach(
+						function(button) {
+
+							button
+									.addEventListener(
+											"click",
+											function() {
+
+												const row = button
+														.closest("tr");
+
+												// Ma don
+												document
+														.getElementById("detailOrderCode").textContent = row
+														.querySelector(".order-code").textContent
+														.trim();
+
+												// Ten khach hang
+												document
+														.getElementById("detailOrderCustomer").textContent = row
+														.querySelector(".order-customer").textContent
+														.trim();
+
+												// So dien thoai
+												document
+														.getElementById("detailOrderPhone").textContent = button.dataset.phone
+														|| "Chưa có";
+
+												// Dia chi khach
+												document
+														.getElementById("detailOrderAddress").textContent = button.dataset.address
+														|| "Chưa có";
+
+												// Hinh thuc dat
+												document
+														.getElementById("detailOrderType").textContent = row
+														.querySelector(".order-type").textContent
+														.trim();
+
+												// Ban an
+												document
+														.getElementById("detailOrderTable").textContent = button.dataset.table
+														|| "Chưa có";
+
+												// Ngay dat
+												document
+														.getElementById("detailOrderDate").textContent = row
+														.querySelector(".order-date").textContent
+														.trim();
+
+												// Tong tien
+												document
+														.getElementById("detailOrderPrice").textContent = row
+														.querySelector(".order-price").textContent
+														.trim();
+
+												// Trang thai
+												const statusElement = row
+														.querySelector(".order-status");
+
+												document
+														.getElementById("detailOrderStatus").textContent = statusElement ? statusElement.textContent
+														.trim()
+														: "Chưa có";
+
+												// Dia chi giao hang
+												document
+														.getElementById("detailOrderDelivery").textContent = button.dataset.deliveryAddress
+														|| "Chưa có";
+
+												// Ghi chu
+												document
+														.getElementById("detailOrderNote").textContent = button.dataset.note
+														|| "Không có ghi chú";
+
+												// Mo hop thoai Chi tiet
+												orderDetailModal.classList
+														.add("open");
+
+												// Lay ID don hang dang xem
+												const orderId = button.dataset.id;
+
+												// Tai danh sach mon an tu API
+												loadOrderItems(orderId);
+
+												// Dua con tro den nut Dong
+												closeOrderDetailButton.focus();
+
+											});
+
+						});
+
+		// =====================================
+		// DONG CHI TIET DON HANG
+		// =====================================
+
+		function closeOrderModal() {
+
+			orderDetailModal.classList.remove("open");
+		}
+
+		closeOrderDetailButton.addEventListener("click", closeOrderModal);
+
+		// Nhan ra ben ngoai
+		orderDetailModal.addEventListener("click", function(event) {
+
+			if (event.target === orderDetailModal) {
+				closeOrderModal();
+			}
+
+		});
+
+		// Nhan phim ESC
+		document.addEventListener("keydown", function(event) {
+
+			if (event.key === "Escape") {
+				closeOrderModal();
+			}
+
+		});
+
+		// ========================================
+		// CHUC NANG TAO DON HANG MOI
+		// ========================================
+
+		// Hop thoai tao don
+		const createOrderModal = document.getElementById("createOrderModal");
+
+		// Form tao don
+		const createOrderForm = document.getElementById("createOrderForm");
+
+		// Hinh thuc dat hang
+		const createOrderType = document.getElementById("createOrderType");
+
+		// Khu vuc chon ban
+		const createOrderTableField = document
+				.getElementById("createOrderTableField");
+
+		const createOrderTable = document.getElementById("createOrderTable");
+
+		// Khu vuc dia chi giao hang
+		const createOrderDeliveryField = document
+				.getElementById("createOrderDeliveryField");
+
+		const createOrderDelivery = document
+				.getElementById("createOrderDelivery");
+
+		// Khu vuc danh sach mon
+		const createOrderItems = document.getElementById("createOrderItems");
+
+		// Mau dong mon an
+		const createOrderItemTemplate = document
+				.getElementById("createOrderItemTemplate");
+
+		// Tong tien
+		const createOrderTotal = document.getElementById("createOrderTotal");
+
+		// ========================================
+		// HIEN THI BAN AN HOAC DIA CHI GIAO HANG
+		// ========================================
+
+		function updateCreateOrderType() {
+
+			const isDineIn = createOrderType.value === "DINE_IN";
+
+			if (isDineIn) {
+
+				// Dat tai quan: Chon ban
+				createOrderTableField.style.display = "flex";
+				createOrderDeliveryField.style.display = "none";
+
+				createOrderTable.required = true;
+				createOrderDelivery.required = false;
+				createOrderDelivery.value = "";
+
+			} else {
+
+				// Giao hang: Nhap dia chi
+				createOrderTableField.style.display = "none";
+				createOrderDeliveryField.style.display = "flex";
+
+				createOrderTable.required = false;
+				createOrderTable.value = "";
+
+				createOrderDelivery.required = true;
+			}
+		}
+
+		createOrderType.addEventListener("change", updateCreateOrderType);
+
+		// ========================================
+		// TINH TONG TIEN DON HANG
+		// ========================================
+
+		function updateCreateOrderTotal() {
+
+			let total = 0;
+
+			const rows = createOrderItems
+					.querySelectorAll(".order-create-item");
+
+			rows
+					.forEach(function(row) {
+
+						const productSelect = row
+								.querySelector(".create-order-product");
+
+						const quantityInput = row
+								.querySelector(".create-order-quantity");
+
+						const subtotalLabel = row
+								.querySelector(".order-create-subtotal");
+
+						// Lay gia tu mon an duoc chon
+						const selectedOption = productSelect.selectedOptions[0];
+
+						const price = Number(selectedOption ? selectedOption.dataset.price || 0
+								: 0);
+
+						const quantity = Number(quantityInput.value);
+
+						let subtotal = 0;
+
+						if (Number.isFinite(price)
+								&& Number.isInteger(quantity) && quantity > 0
+								&& quantity <= 1000) {
+
+							subtotal = price * quantity;
+						}
+
+						// Hien thi thanh tien tung mon
+						subtotalLabel.textContent = subtotal
+								.toLocaleString("vi-VN")
+								+ "đ";
+
+						total += subtotal;
+					});
+
+			// Hien thi tong tien
+			createOrderTotal.textContent = total.toLocaleString("vi-VN") + "đ";
+		}
+
+		// ========================================
+		// THEM MOT DONG MON AN
+		// ========================================
+
+		function addCreateOrderItem() {
+
+			// Sao chep dong mon tu template
+			const row = createOrderItemTemplate.content.firstElementChild
+					.cloneNode(true);
+
+			const productSelect = row.querySelector(".create-order-product");
+
+			const quantityInput = row.querySelector(".create-order-quantity");
+
+			const removeButton = row.querySelector(".order-create-remove");
+
+			// Chon mon -> Tinh lai tien
+			productSelect.addEventListener("change", function() {
+
+				updateCreateOrderTotal();
+			});
+
+			// Doi so luong -> Tinh lai tien
+			quantityInput.addEventListener("input", function() {
+
+				updateCreateOrderTotal();
+			});
+
+			// Xoa mot dong mon an
+			removeButton.addEventListener("click", function() {
+
+				row.remove();
+
+				updateCreateOrderTotal();
+			});
+
+			// Them dong vao form
+			createOrderItems.appendChild(row);
+
+			updateCreateOrderTotal();
+		}
+
+		// ========================================
+		// NUT THEM MON AN
+		// ========================================
+
+		document.getElementById("addCreateOrderItem").addEventListener("click",
+				function() {
+
+					addCreateOrderItem();
+				});
+
+		// ========================================
+		// MO FORM TAO DON
+		// ========================================
+
+		document.getElementById("openCreateOrder").addEventListener("click",
+				function() {
+
+					// Xoa du lieu lan truoc
+					createOrderForm.reset();
+
+					// Xoa danh sach mon cu
+					createOrderItems.innerHTML = "";
+
+					// Mac dinh dat tai quan
+					createOrderType.value = "DINE_IN";
+
+					updateCreateOrderType();
+
+					// Them san 1 dong mon
+					addCreateOrderItem();
+
+					// Mo hop thoai
+					createOrderModal.classList.add("open");
+
+					document.getElementById("createOrderCustomer").focus();
+				});
+
+		// ========================================
+		// DONG FORM TAO DON
+		// ========================================
+
+		function closeCreateOrderModal() {
+
+			createOrderModal.classList.remove("open");
+		}
+
+		// Nut Huy
+		document.getElementById("cancelCreateOrder").addEventListener("click",
+				function() {
+					closeCreateOrderModal();
+				});
+
+		// Nhan vao nen ngoai
+		createOrderModal.addEventListener("click", function(event) {
+			if (event.target === createOrderModal) {
+				closeCreateOrderModal();
+			}
+		});
+
+		// Nhan ESC
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeCreateOrderModal();
+			}
+		});
+
+		// ========================================
+		// KIEM TRA TRUOC KHI LUU DON
+		// ========================================
+
+		createOrderForm.addEventListener("submit", function(event) {
+			const productSelects = Array.from(createOrderItems
+					.querySelectorAll(".create-order-product"));
+
+			// Phai co it nhat mot mon
+			if (productSelects.length === 0) {
+				event.preventDefault();
+				alert("Vui lòng chọn ít nhất một món ăn!");
+				return;
+			}
+
+			// Kiem tra moi dong da chon mon
+			const productIds = productSelects.map(function(select) {
+				return select.value;
+			});
+
+			if (productIds.some(function(id) {
+				return id === "";
+			})) {
+				event.preventDefault();
+				alert("Vui lòng chọn đầy đủ món ăn!");
+				return;
+			}
+
+			// Khong cho chon trung mon trong cung don
+			if (new Set(productIds).size !== productIds.length) {
+				event.preventDefault();
+				alert("Bạn đang chọn trùng món ăn. "
+						+ "Hãy gộp số lượng vào một dòng!");
+				return;
+			}
+
+			// Ngan bam Luu nhieu lan
+			const saveButton = document.getElementById("saveCreateOrder");
+			saveButton.disabled = true;
+			saveButton.textContent = "Đang lưu...";
+		});
+
+		// ========================================
+		// HIEN THI CHI TIET MON AN CUA DON HANG
+		// ========================================
+
+		// Noi hien thi cac mon an
+		const detailOrderItemsBody = document
+				.getElementById("detailOrderItemsBody");
+
+		// Noi hien thi tong tien cac mon
+		const detailOrderItemsTotal = document
+				.getElementById("detailOrderItemsTotal");
+
+		// Dung de tranh hien du lieu cua lan bam cu
+		let orderItemsRequestId = 0;
+
+		// ========================================
+		// HAM DINH DANG TIEN VN
+		// ========================================
+
+		function formatOrderMoney(value) {
+
+			return Number(value).toLocaleString("vi-VN") + "đ";
+		}
+
+		// ========================================
+		// HIEN THI THONG BAO TRONG BANG
+		// ========================================
+
+		function showOrderItemsMessage(message) {
+
+			detailOrderItemsBody.replaceChildren();
+
+			const tr = document.createElement("tr");
+			const td = document.createElement("td");
+
+			td.colSpan = 5;
+			td.style.textAlign = "center";
+			td.textContent = message;
+
+			tr.appendChild(td);
+			detailOrderItemsBody.appendChild(tr);
+		}
+
+		// ========================================
+		// GOI API LAY DANH SACH MON AN
+		// ========================================
+
+		async function loadOrderItems(orderId) {
+			const requestId = ++orderItemsRequestId;
+
+			// Hien thong bao trong luc tai
+			showOrderItemsMessage("Đang tải món ăn...");
+			detailOrderItemsTotal.textContent = "—";
+			try {
+
+
+				// Goi API Spring Boot
+				const response = await fetch(
+				    "/admin/orders/" + encodeURIComponent(orderId) + "/items"
+				);
+
+				// Kiem tra ket qua API
+				if (!response.ok) {
+				    throw new Error("Không lấy được dữ liệu món ăn!");
+				}
+
+				// Chuyen JSON thanh mang JavaScript
+				const items = await response.json();
+
+				// Khong hien ket qua cua lan bam cu
+				if (requestId !== orderItemsRequestId) {
+					return;
+				}
+
+				if (!Array.isArray(items)) {
+					throw new Error("Dữ liệu trả về không hợp lệ!");
+				}
+
+				// Xoa noi dung bang cu
+				detailOrderItemsBody.replaceChildren();
+
+				// Neu don hang chua co chi tiet
+				if (items.length === 0) {
+
+					showOrderItemsMessage("Đơn hàng này chưa có chi tiết món ăn.");
+
+					return;
+				}
+
+				let total = 0;
+
+				// Duyet tung mon an
+				items.forEach(function(item, index) {
+
+					const quantity = Number(item.quantity);
+					const price = Number(item.price);
+					const subtotal = Number(item.subtotal);
+
+					total += subtotal;
+
+					// Tao dong bang
+					const tr = document.createElement("tr");
+
+					// Tao cac o trong dong
+					const values = [ index + 1, item.name || "Chưa có tên",
+							quantity, formatOrderMoney(price),
+							formatOrderMoney(subtotal) ];
+
+					values.forEach(function(value) {
+
+						const td = document.createElement("td");
+
+						// textContent giup hien thi an toan
+						td.textContent = value;
+
+						tr.appendChild(td);
+					});
+
+					// Dua dong vao bang
+					detailOrderItemsBody.appendChild(tr);
+				});
+
+				// Cap nhat tong tien cac mon
+				detailOrderItemsTotal.textContent = formatOrderMoney(total);
+
+			} catch (error) {
+
+				if (requestId !== orderItemsRequestId) {
+					return;
+				}
+
+				showOrderItemsMessage("Không thể tải chi tiết món ăn. Vui lòng thử lại!");
+
+				detailOrderItemsTotal.textContent = "—";
+
+				console.error(error);
+			}
+		}
+
+		// ========================================
+		// CHUC NANG SUA TRANG THAI DON HANG
+		// ========================================
+
+		// Hop thoai Sua
+		const editOrderModal = document.getElementById("editOrderModal");
+
+		// Form Sua
+		const editOrderForm = document.getElementById("editOrderForm");
+
+		// O chon trang thai moi
+		const editOrderNewStatus = document
+				.getElementById("editOrderNewStatus");
+
+		// Thong bao canh bao
+		const editOrderWarning = document.getElementById("editOrderWarning");
+
+		// Ten hien thi cua cac trang thai
+		const orderStatusNames = {
+			PENDING : "Chờ xác nhận",
+			PREPARING : "Đang chế biến",
+			COMPLETED : "Hoàn thành",
+			CANCELLED : "Đã hủy"
+		};
+
+		// ========================================
+		// MO FORM SUA DON HANG
+		// ========================================
+
+		document
+				.querySelectorAll(".order-edit-btn")
+				.forEach(
+						function(button) {
+
+							button
+									.addEventListener(
+											"click",
+											function() {
+
+												// Lay thong tin don hang
+												const id = button.dataset.id;
+												const customer = button.dataset.customer;
+												const currentStatus = button.dataset.status;
+
+												// Xoa thong tin cua lan sua truoc
+												editOrderForm.reset();
+
+												// Dua thong tin vao form
+												document
+														.getElementById("editOrderId").value = id;
+
+												document
+														.getElementById("editOrderCode").textContent = "DH"
+														+ String(id).padStart(
+																3, "0");
+
+												document
+														.getElementById("editOrderCustomer").textContent = customer;
+
+												document
+														.getElementById("editOrderCurrentStatus").textContent = orderStatusNames[currentStatus]
+														|| currentStatus;
+
+												// Xoa danh sach trang thai cu
+												editOrderNewStatus
+														.replaceChildren();
+
+												// Tao option mac dinh
+												const defaultOption = document
+														.createElement("option");
+
+												defaultOption.value = "";
+												defaultOption.textContent = "-- Chọn trạng thái --";
+
+												editOrderNewStatus
+														.appendChild(defaultOption);
+
+												// Danh sach trang thai duoc phep chuyen
+												let allowedStatuses = [];
+
+												// Cho xac nhan
+												if (currentStatus === "PENDING") {
+
+													allowedStatuses = [
+															"PREPARING",
+															"CANCELLED" ];
+												}
+
+												// Dang che bien
+												else if (currentStatus === "PREPARING") {
+
+													allowedStatuses = [
+															"COMPLETED",
+															"CANCELLED" ];
+												}
+
+												// Them cac option hop le
+												allowedStatuses
+														.forEach(function(
+																status) {
+
+															const option = document
+																	.createElement("option");
+
+															option.value = status;
+
+															option.textContent = orderStatusNames[status];
+
+															editOrderNewStatus
+																	.appendChild(option);
+														});
+
+												// An canh bao ban dau
+												editOrderWarning.style.display = "none";
+
+												// Mo hop thoai
+												editOrderModal.classList
+														.add("open");
+
+												editOrderNewStatus.focus();
+											});
+
+						});
+
+		// ========================================
+		// CANH BAO KHI CHON HUY DON
+		// ========================================
+
+		editOrderNewStatus.addEventListener("change", function() {
+
+			if (this.value === "CANCELLED") {
+
+				editOrderWarning.style.display = "block";
+
+			} else {
+
+				editOrderWarning.style.display = "none";
+			}
+		});
+
+		// ========================================
+		// DONG HOP THOAI SUA
+		// ========================================
+
+		function closeEditOrderModal() {
+
+			editOrderModal.classList.remove("open");
+		}
+
+		// Nut Huy
+		document.getElementById("cancelEditOrder").addEventListener("click",
+				function() {
+
+					closeEditOrderModal();
+				});
+
+		// Nhan ra ben ngoai hop thoai
+		editOrderModal.addEventListener("click", function(event) {
+
+			if (event.target === editOrderModal) {
+
+				closeEditOrderModal();
+			}
+		});
+
+		// Nhan ESC
+		document.addEventListener("keydown", function(event) {
+
+			if (event.key === "Escape") {
+
+				closeEditOrderModal();
+			}
+		});
+
+		// ========================================
+		// GUI YEU CAU CAP NHAT
+		// ========================================
+
+		editOrderForm
+				.addEventListener(
+						"submit",
+						function(event) {
+
+							// Kiem tra da chon trang thai
+							if (!editOrderNewStatus.value) {
+
+								event.preventDefault();
+
+								alert("Vui lòng chọn trạng thái mới!");
+								return;
+							}
+
+							// Hoi xac nhan neu huy don
+							if (editOrderNewStatus.value === "CANCELLED") {
+
+								const confirmed = confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?");
+
+								if (!confirmed) {
+
+									event.preventDefault();
+									return;
+								}
+							}
+
+							// Ngan gui nhieu lan
+							const saveButton = document
+									.getElementById("saveEditOrder");
+
+							saveButton.disabled = true;
+							saveButton.textContent = "Đang lưu...";
+						});
+
+		// ========================================
+		// CHUC NANG XOA DON HANG
+		// ========================================
+
+		// Lay hop thoai Xoa
+		const deleteOrderModal = document.getElementById("deleteOrderModal");
+
+		// Lay form Xoa
+		const deleteOrderForm = document.getElementById("deleteOrderForm");
+
+		// ========================================
+		// MO HOP THOAI KHI NHAN NUT XOA
+		// ========================================
+
+		document
+				.querySelectorAll(".order-delete-btn")
+				.forEach(
+						function(button) {
+
+							button
+									.addEventListener(
+											"click",
+											function() {
+
+												// Lay thong tin don hang
+												const id = button.dataset.id;
+												const customer = button.dataset.customer;
+
+												// Gan ID de gui ve Spring Boot
+												document
+														.getElementById("deleteOrderId").value = id;
+
+												// Hien thi ma don
+												document
+														.getElementById("deleteOrderCode").textContent = "DH"
+														+ String(id).padStart(
+																3, "0");
+
+												// Hien thi ten khach hang
+												document
+														.getElementById("deleteOrderCustomer").textContent = customer;
+
+												// Mo hop thoai
+												deleteOrderModal.classList
+														.add("open");
+											});
+						});
+
+		// ========================================
+		// DONG HOP THOAI
+		// ========================================
+
+		function closeDeleteOrderModal() {
+			deleteOrderModal.classList.remove("open");
+		}
+
+		// Nut Khong xoa
+		document.getElementById("cancelDeleteOrder").addEventListener("click",
+				function() {
+					closeDeleteOrderModal();
+				});
+
+		// Nhan ra ben ngoai hop thoai
+		deleteOrderModal.addEventListener("click", function(event) {
+
+			if (event.target === deleteOrderModal) {
+				closeDeleteOrderModal();
+			}
+		});
+
+		// Nhan phim ESC
+		document.addEventListener("keydown", function(event) {
+
+			if (event.key === "Escape") {
+				closeDeleteOrderModal();
+			}
+		});
+
+		// ========================================
+		// GUI YEU CAU XOA VE CONTROLLER
+		// ========================================
+
+		deleteOrderForm
+				.addEventListener("submit",
+						function(event) {
+
+							// Lay ID don hang
+							const orderId = document
+									.getElementById("deleteOrderId").value;
+
+							// Kiem tra ID
+							if (!orderId) {
+								event.preventDefault();
+								alert("Không tìm thấy đơn hàng cần xóa!");
+								return;
+							}
+
+							// Ngan nhan nhieu lan
+							const confirmButton = document
+									.getElementById("confirmDeleteOrder");
+
+							confirmButton.disabled = true;
+							confirmButton.textContent = "Đang xóa...";
+						});
+	</script>
+
+</body>
+</html>

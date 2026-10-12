@@ -17,4 +17,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			GROUP BY p.category.id
 			""")
 	List<Object[]> countProductsByCategory();
+
+	// Dem so mon an thuoc mot danh muc
+	long countByCategory_Id(Long categoryId);
+
+	// Dem so mon an dang kinh doanh
+	long countByAvailableTrue();
+
+	// Dem so mon an tam ngung ban
+	long countByAvailableFalse();
+
 }

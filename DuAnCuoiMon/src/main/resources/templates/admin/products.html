@@ -1,0 +1,1792 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý món ăn - FOOD ORDER</title>
+
+<!-- Dung chung CSS voi Admin Dashboard -->
+<link rel="stylesheet" th:href="@{/css/admin.css}">
+
+<style>
+/* GIAO DIEN ADMIN QUAN LY MON AN */
+.product-breadcrumb {
+	font-size: 11px;
+	color: #8397aa;
+	margin-bottom: 12px;
+}
+
+.product-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.product-heading h1 {
+	color: #30485f;
+	font-size: 21px;
+	margin: 0 0 6px;
+	font-weight: bold;
+}
+
+.product-heading p {
+	color: #8497aa;
+	font-size: 11px;
+	margin: 0;
+}
+
+.product-year {
+	border: 1px solid #d4dee8;
+	padding: 9px 13px;
+	background: white;
+	color: #6b8197;
+	font-size: 11px;
+}
+
+/* BON O THONG KE */
+.product-stats {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.product-stat {
+	min-height: 98px;
+	background: white;
+	border: 1px solid #d8e0ea;
+	padding: 18px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.product-stat-icon {
+	height: 47px;
+	width: 47px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #cfdae5;
+	background: #eef3f7;
+	color: #557c9b;
+	font-size: 24px;
+}
+
+.product-stat-label {
+	color: #8498aa;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
+
+.product-stat-value {
+	color: #30485f;
+	font-size: 26px;
+	font-weight: bold;
+}
+
+/* KHUNG DANH SACH */
+.product-panel {
+	background: white;
+	border: 1px solid #d8e0ea;
+	margin-bottom: 12px;
+}
+
+.product-panel-head {
+	padding: 13px 15px;
+	border-bottom: 1px solid #dce4ec;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.product-panel-head strong {
+	font-size: 14px;
+	color: #343d48;
+}
+
+.product-panel-note {
+	color: #90a5b8;
+	font-size: 10px;
+}
+
+/* THANH CHUC NANG */
+.product-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding: 13px 14px;
+}
+
+.product-toolbar-left, .product-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.product-btn {
+	border: 1px solid #cdd9e4;
+	border-radius: 0;
+	background: white;
+	color: #456c8d;
+	padding: 9px 12px;
+	font-size: 11px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.product-btn-primary {
+	color: white;
+	background: #456f90;
+	border-color: #456f90;
+}
+
+.product-btn:disabled {
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+.product-input, .product-select {
+	height: 32px;
+	border: 1px solid #cfdbe6;
+	border-radius: 0;
+	background: white;
+	color: #526980;
+	padding: 6px 10px;
+	font-size: 11px;
+}
+
+.product-input {
+	width: 185px;
+}
+
+.product-select {
+	min-width: 130px;
+}
+
+/* BANG MON AN */
+.product-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.product-table {
+	border-collapse: collapse;
+	width: 100%;
+	min-width: 1020px;
+	font-size: 11px;
+}
+
+.product-table th {
+	background: #e7edf3;
+	color: #366d98;
+	border: 1px solid #d5dfe9;
+	text-align: left;
+	padding: 11px 10px;
+}
+
+.product-table td {
+	border: 1px solid #e0e6ed;
+	color: #40556a;
+	padding: 8px 10px;
+	height: 60px;
+	vertical-align: middle;
+}
+
+.product-table tbody tr:nth-child(even) {
+	background: #f8fafc;
+}
+
+.product-name, .product-price {
+	font-weight: bold;
+}
+
+/* HINH ANH MON AN */
+.product-photo {
+	height: 51px;
+	width: 58px;
+	border: 1px solid #d6dfe8;
+	background: #edf1f5;
+	position: relative;
+	overflow: hidden;
+}
+
+.product-photo img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 1;
+}
+
+.product-photo-fallback {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	font-size: 10px;
+	color: #8799a8;
+}
+
+/* TRANG THAI MON AN */
+.product-status {
+	display: inline-block;
+	background: #f0f3f6;
+	border: 1px solid #d7e0e8;
+	color: #5a7285;
+	padding: 5px 7px;
+	border-left-width: 3px;
+	font-size: 10px;
+}
+
+.product-status.is-active {
+	border-left-color: #74978d;
+}
+
+.product-status.is-paused {
+	border-left-color: #af9a7e;
+}
+
+/* CAC NUT THAO TAC */
+.product-actions {
+	display: flex;
+	gap: 5px;
+}
+
+.product-action {
+	border: 1px solid #cbd9e6;
+	background: white;
+	color: #376e96;
+	font-size: 10px;
+	padding: 5px 7px;
+	cursor: pointer;
+	border-radius: 0;
+}
+
+.product-action:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.product-action:hover:not(:disabled) {
+	background: #eaf2f8;
+}
+
+/* PHAN TRANG */
+.product-pager {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 14px;
+	color: #8397aa;
+	font-size: 10px;
+}
+
+.product-pager-buttons {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.product-page-btn {
+	border: 1px solid #cfdae5;
+	background: white;
+	color: #567a98;
+	padding: 5px 9px;
+	cursor: pointer;
+}
+
+.product-page-btn.current {
+	background: #456f90;
+	color: white;
+}
+
+.product-page-btn:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+/* THONG TIN PHIA DUOI */
+.product-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 11px;
+	padding: 13px;
+}
+
+.product-info-box {
+	background: #f8f9fb;
+	border: 1px solid #dce3eb;
+	padding: 15px 14px;
+	min-height: 80px;
+}
+
+.product-info-box strong {
+	display: block;
+	color: #405d77;
+	font-size: 12px;
+	margin-bottom: 8px;
+}
+
+.product-info-box p {
+	color: #8295a6;
+	font-size: 11px;
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* HOP THOAI CHI TIET */
+.product-modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(20, 35, 50, 0.5);
+	z-index: 1000;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.product-modal.open {
+	display: flex;
+}
+
+.product-modal-box {
+	background: white;
+	border: 1px solid #cfdae5;
+	width: 100%;
+	max-width: 480px;
+}
+
+.product-modal-body {
+	padding: 20px;
+	font-size: 12px;
+	color: #40556a;
+	line-height: 2;
+}
+
+.product-modal-footer {
+	border-top: 1px solid #dce3ec;
+	padding: 12px 18px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+@media ( max-width : 950px) {
+	.product-stats {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.product-info-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media ( max-width : 600px) {
+	.product-stats {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* FORM THEM MON AN */
+.product-form-body {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	max-height: 65vh;
+	overflow-y: auto;
+}
+
+.product-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.product-form-field label {
+	font-size: 12px;
+	font-weight: bold;
+	color: #405d77;
+}
+
+.product-form-field input, .product-form-field select,
+	.product-form-field textarea {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #cfdae5;
+	border-radius: 0;
+	padding: 10px 12px;
+	font-family: inherit;
+	font-size: 12px;
+	color: #40556a;
+	background: white;
+}
+
+.product-form-field input:focus, .product-form-field select:focus,
+	.product-form-field textarea:focus {
+	outline: 1px solid #456f90;
+	border-color: #456f90;
+}
+
+.product-form-note {
+	color: #8498aa;
+	font-size: 10px;
+}
+
+.product-modal-footer {
+	gap: 8px;
+}
+
+/* THONG BAO KET QUA */
+.product-flash {
+	padding: 12px 15px;
+	margin-bottom: 15px;
+	font-size: 12px;
+	border: 1px solid;
+}
+
+.product-flash-success {
+	background: #edf7f0;
+	border-color: #a9d5b4;
+	color: #287344;
+}
+
+.product-flash-error {
+	background: #fff1f1;
+	border-color: #e5b6b6;
+	color: #a63f3f;
+}
+</style>
+</head>
+
+<body class="admin-page">
+
+	<!-- HEADER ADMIN -->
+	<header class="admin-topbar">
+		<div class="admin-brand">
+			<div class="brand-icon">✳</div>
+			<div>
+				<div class="brand-title">
+					Food<span>Order</span>
+				</div>
+				<div class="brand-subtitle">Hệ thống quản lý nhà hàng •
+					Restaurant Management</div>
+			</div>
+		</div>
+
+		<div class="admin-search">
+			<input type="search" placeholder="Tìm nhanh món ăn, đơn hàng"
+				disabled>
+
+			<button type="button" disabled>⌕</button>
+
+		</div>
+
+		<div class="admin-actions">
+			<div class="admin-action">
+				Hôm nay: <span class="time" id="adminClock"></span>
+			</div>
+			<div class="admin-action">●</div>
+			<div class="admin-action">⚙ Cài đặt</div>
+			<div class="admin-action">● Admin</div>
+		</div>
+
+	</header>
+
+	<!-- MENU NGANG ADMIN -->
+
+	<nav class="admin-nav">
+		<a class=""
+			th:href="@{/admin}"> ▫ Tổng quan </a> 
+		<a class=""
+			th:href="@{/admin/orders}"> ▤ Đơn hàng </a> 
+		<a class=""
+			th:href="@{/admin/categories}"> ▦ Danh mục </a> 
+		<a class="active"
+			th:href="@{/admin/products}"> ▣ Món ăn </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Nhân viên </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Người dùng </a> 
+		<a href="#"
+			onclick="return false;"> ▦ Bàn ăn </a> 
+		<a href="#"
+			onclick="return false;"> $ Thanh toán </a> 
+		<a href="#"
+			onclick="return false;"> ▥ Báo cáo </a>
+	</nav>
+
+	<!-- NOI DUNG CHINH -->
+
+	<main class="admin-main">
+
+		<!-- DUONG DAN -->
+
+		<div class="product-breadcrumb">Trang chủ / Admin / Quản lý món
+			ăn</div>
+
+		<!-- TIEU DE -->
+
+		<div class="product-heading">
+
+			<div>
+				<h1>▣ QUẢN LÝ MÓN ĂN</h1>
+
+				<p>Quản lý thực đơn, giá bán, hình ảnh và tình trạng kinh doanh
+				</p>
+			</div>
+
+			<div class="product-year" th:text="|Năm ${reportYear} ▾|">Năm
+				2026 ▾</div>
+
+		</div>
+
+		<!-- ========================================
+             BON O THONG KE
+             ======================================== -->
+
+		<div class="product-stats">
+			<!-- THONG BAO THEM MON THANH CONG -->
+			<div class="product-flash product-flash-success" th:if="${success}"
+				th:text="${success}" role="status">Thêm món ăn thành công!</div>
+
+			<!-- THONG BAO NEU CO LOI -->
+			<div class="product-flash product-flash-error" th:if="${error}"
+				th:text="${error}" role="alert">Có lỗi khi thêm món ăn!</div>
+
+			<!-- TONG MON AN -->
+			<div class="product-stat">
+				<div class="product-stat-icon">▣</div>
+				<div>
+					<div class="product-stat-label">Tổng món ăn</div>
+					<div class="product-stat-value" th:text="${totalProducts}">0
+					</div>
+				</div>
+
+			</div>
+
+			<!-- DANG KINH DOANH -->
+			<div class="product-stat">
+				<div class="product-stat-icon">✓</div>
+				<div>
+					<div class="product-stat-label">Đang kinh doanh</div>
+					<div class="product-stat-value" th:text="${availableProducts}">
+						0</div>
+				</div>
+			</div>
+
+			<!-- TAM NGUNG BAN -->
+			<div class="product-stat">
+				<div class="product-stat-icon">◷</div>
+				<div>
+					<div class="product-stat-label">Tạm ngừng bán</div>
+					<div class="product-stat-value" th:text="${unavailableProducts}">
+						0</div>
+				</div>
+
+			</div>
+
+			<!-- TONG DANH MUC -->
+
+			<div class="product-stat">
+
+				<div class="product-stat-icon">▦</div>
+
+				<div>
+					<div class="product-stat-label">Danh mục món</div>
+
+					<div class="product-stat-value" th:text="${totalCategories}">
+						0</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- ========================================
+             DANH SACH MON AN
+             ======================================== -->
+
+		<section class="product-panel">
+
+			<div class="product-panel-head">
+
+				<strong>▤ Danh sách món ăn</strong> <span class="product-panel-note">
+					Dữ liệu từ MySQL </span>
+
+			</div>
+
+			<!-- THANH CONG CU -->
+
+			<div class="product-toolbar">
+
+				<div class="product-toolbar-left">
+
+					<button type="button" class="product-btn product-btn-primary"
+						id="openAddProduct">+ Thêm món ăn</button>
+
+					<button type="button" class="product-btn" id="resetProductFilters">
+						↻ Làm mới bộ lọc</button>
+
+				</div>
+
+				<div class="product-toolbar-right">
+
+					<!-- TIM KIEM -->
+
+					<input type="search" id="productSearch" class="product-input"
+						placeholder="Tên hoặc mã món...">
+
+					<!-- LOC DANH MUC -->
+
+					<select id="productCategoryFilter" class="product-select">
+
+						<option value="all">Tất cả danh mục</option>
+
+						<option th:each="category : ${categories}"
+							th:value="${category.id}" th:text="${category.name}">
+							Sushi</option>
+
+					</select>
+
+					<!-- LOC TRANG THAI -->
+
+					<select id="productStatusFilter" class="product-select">
+
+						<option value="all">Tất cả trạng thái</option>
+
+						<option value="true">Đang bán</option>
+
+						<option value="false">Tạm ngừng</option>
+
+					</select>
+
+				</div>
+
+			</div>
+
+			<!-- BANG DU LIEU -->
+
+			<div class="product-table-wrap">
+
+				<table class="product-table">
+
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Ảnh</th>
+							<th>Mã món</th>
+							<th>Tên món ăn</th>
+							<th>Danh mục</th>
+							<th>Giá bán</th>
+							<th>Trạng thái</th>
+							<th>Cập nhật</th>
+							<th>Thao tác</th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						<!-- LAP QUA CAC MON AN MYSQL -->
+
+						<tr class="product-data-row" th:each="product, stt : ${products}"
+							th:data-category="${product.category != null ? product.category.id : ''}"
+							th:data-available="${product.available}">
+
+							<!-- SO THU TU -->
+
+							<td class="product-index" th:text="${stt.count}">1</td>
+
+							<!-- HINH ANH -->
+
+							<td>
+
+								<div class="product-photo">
+
+									<img
+										th:if="${product.image != null and !#strings.isEmpty(product.image)}"
+										th:src="${#strings.startsWith(product.image, '/') or #strings.startsWith(product.image, 'http') ? product.image : '/images/' + product.image}"
+										th:alt="${product.name}" onerror="this.style.display='none'">
+
+									<span class="product-photo-fallback"> Chưa có ảnh </span>
+
+								</div>
+
+							</td>
+
+							<!-- MA MON AN -->
+
+							<td class="product-code"
+								th:text="${'MA' + #numbers.formatInteger(product.id, 3)}">
+								MA001</td>
+
+							<!-- TEN MON -->
+
+							<td class="product-name" th:text="${product.name}">Sushi cá
+								hồi</td>
+
+							<!-- DANH MUC -->
+
+							<td class="product-category-name"
+								th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}">
+								Sushi</td>
+
+							<!-- GIA BAN -->
+
+							<td class="product-price"
+								th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+								65.000đ</td>
+
+							<!-- TRANG THAI -->
+
+							<td><span class="product-status"
+								th:classappend="${product.available ? ' is-active' : ' is-paused'}"
+								th:text="${product.available ? 'Đang bán' : 'Tạm ngừng'}">
+									Đang bán </span></td>
+
+							<!-- NGAY CAP NHAT -->
+
+							<td>—</td>
+
+							<!-- THAO TAC -->
+
+							<td>
+
+								<div class="product-actions">
+
+									<button type="button" class="product-action product-detail-btn"
+										th:data-description="${product.description}">Chi tiết
+									</button>
+
+									<button type="button" class="product-action product-edit-btn"
+										th:data-id="${product.id}" th:data-name="${product.name}"
+										th:data-price="${product.price}"
+										th:data-category="${product.category != null ? product.category.id : ''}"
+										th:data-description="${product.description}"
+										th:data-available="${product.available}"
+										th:data-image="${product.image}">Sửa</button>
+
+
+									<button type="button" class="product-action product-delete-btn"
+										th:data-id="${product.id}" th:data-name="${product.name}">
+										Xóa</button>
+
+
+								</div>
+
+							</td>
+
+						</tr>
+
+						<!-- KHONG CO KET QUA -->
+
+						<tr id="productEmptyRow" style="display: none;">
+
+							<td colspan="9" style="text-align: center; padding: 22px;">
+								Không tìm thấy món ăn phù hợp.</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+			<!-- PHAN TRANG -->
+
+			<div class="product-pager">
+
+				<span id="productRecordCount"> Hiển thị 0 món ăn </span>
+
+				<div class="product-pager-buttons">
+
+					<span id="productPageInfo"> Trang 1/1 </span>
+
+					<button type="button" class="product-page-btn" id="productPrevPage">
+						‹</button>
+
+					<button type="button" class="product-page-btn current"
+						id="productCurrentPage" disabled>1</button>
+
+					<button type="button" class="product-page-btn" id="productNextPage">
+						›</button>
+
+				</div>
+
+			</div>
+
+		</section>
+
+		<!-- ========================================
+             BA O THONG TIN CUOI TRANG
+             ======================================== -->
+
+		<section class="product-panel">
+
+			<div class="product-panel-head">
+
+				<strong> ▣ Thông tin quản lý món ăn </strong>
+
+			</div>
+
+			<div class="product-info-grid">
+
+				<div class="product-info-box">
+
+					<strong>Thêm món ăn mới</strong>
+
+					<p>Nhập tên món ăn, danh mục, giá bán, mô tả và hình ảnh sản
+						phẩm.</p>
+
+				</div>
+
+				<div class="product-info-box">
+
+					<strong>Chỉnh sửa món ăn</strong>
+
+					<p>Cập nhật giá bán, thay đổi danh mục, mô tả và ảnh minh họa.
+					</p>
+
+				</div>
+
+				<div class="product-info-box">
+
+					<strong>Quản lý trạng thái</strong>
+
+					<p>Tạm ngừng bán khi hết món và hiển thị lại trên thực đơn khi
+						có hàng.</p>
+
+				</div>
+
+			</div>
+
+		</section>
+
+	</main>
+
+	<!-- FOOTER -->
+
+	<footer class="admin-footer">
+
+		<span> © 2026 FOOD ORDER — Hệ thống quản lý nhà hàng </span> <span>
+			Quản lý Món ăn </span>
+
+	</footer>
+
+	<!-- ========================================
+         HOP THOAI CHI TIET MON AN
+         ======================================== -->
+
+	<div class="product-modal" id="productDetailModal">
+
+		<div class="product-modal-box">
+
+			<div class="product-panel-head">
+
+				<strong>Chi tiết món ăn</strong>
+
+			</div>
+
+			<div class="product-modal-body">
+
+				<div>
+					<strong>Mã món:</strong> <span id="detailProductCode"></span>
+				</div>
+
+				<div>
+					<strong>Tên món:</strong> <span id="detailProductName"></span>
+				</div>
+
+				<div>
+					<strong>Danh mục:</strong> <span id="detailProductCategory"></span>
+				</div>
+
+				<div>
+					<strong>Giá bán:</strong> <span id="detailProductPrice"></span>
+				</div>
+
+				<div>
+					<strong>Trạng thái:</strong> <span id="detailProductStatus"></span>
+				</div>
+
+				<div>
+					<strong>Mô tả:</strong> <span id="detailProductDescription"></span>
+				</div>
+
+			</div>
+
+			<div class="product-modal-footer">
+
+				<button type="button" class="product-btn" id="closeProductDetail">
+					Đóng</button>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- ========================================
+     HOP THOAI THEM MON AN
+     ======================================== -->
+
+	<div class="product-modal" id="addProductModal">
+
+		<div class="product-modal-box">
+
+			<!-- TIEU DE -->
+
+			<div class="product-panel-head">
+				<strong>+ Thêm món ăn mới</strong>
+			</div>
+
+			<!-- FORM GUI VE SPRING BOOT -->
+			<form th:action="@{/admin/products/add}" method="post"
+				enctype="multipart/form-data" id="addProductForm">
+
+				<div class="product-form-body">
+
+					<!-- TEN MON AN -->
+					<div class="product-form-field">
+						<label for="newProductName"> Tên món ăn * </label> <input
+							type="text" id="newProductName" name="name"
+							placeholder="Ví dụ: Tempura tôm" maxlength="255" required>
+					</div>
+
+					<!-- GIA BAN -->
+
+					<div class="product-form-field">
+
+						<label for="newProductPrice"> Giá bán (VNĐ) * </label> <input
+							type="number" id="newProductPrice" name="price"
+							placeholder="Ví dụ: 95000" min="1" step="any" required>
+					</div>
+
+					<!-- DANH MUC -->
+					<div class="product-form-field">
+						<label for="newProductCategory"> Danh mục món ăn * </label> <select
+							id="newProductCategory" name="categoryId" required>
+							<option value="">-- Chọn danh mục --</option>
+							<option th:each="category : ${categories}"
+								th:value="${category.id}" th:text="${category.name}">
+								Sushi</option>
+						</select>
+					</div>
+
+					<!-- MO TA -->
+					<div class="product-form-field">
+						<label for="newProductDescription"> Mô tả món ăn </label>
+						<textarea id="newProductDescription" name="description" rows="3"
+							maxlength="255" placeholder="Nhập mô tả món ăn..."></textarea>
+					</div>
+
+					<!-- CHON HINH ANH TU MAY TINH -->
+					<div class="product-form-field">
+						<label for="newProductPhoto"> Hình ảnh món ăn </label>
+
+						<!-- NUT CHON ANH TU THIS PC -->
+						<input type="file" id="newProductPhoto" name="photo"
+							accept=".jpg,.jpeg,.png,.webp"> <small
+							class="product-form-note"> Chọn ảnh JPG, PNG hoặc WebP từ
+							máy tính. Dung lượng tối đa 5MB. </small>
+
+						<!-- XEM TRUOC HINH ANH -->
+						<img id="newProductPreview" alt="Xem trước hình ảnh món ăn"
+							style="display: none; width: 130px; height: 110px; object-fit: cover; margin-top: 10px; border: 1px solid #cfdae5;">
+					</div>
+
+					<!-- TRANG THAI -->
+					<div class="product-form-field">
+						<label for="newProductAvailable"> Trạng thái kinh doanh </label> <select
+							id="newProductAvailable" name="available">
+							<option value="true">Đang bán</option>
+							<option value="false">Tạm ngừng bán</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- NUT CHUC NANG -->
+				<div class="product-modal-footer">
+					<button type="button" class="product-btn" id="cancelAddProduct">
+						Hủy</button>
+
+					<button type="submit" class="product-btn product-btn-primary">
+						Lưu món ăn</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- ========================================
+     HOP THOAI SUA MON AN
+     ======================================== -->
+	<div class="product-modal" id="editProductModal">
+		<div class="product-modal-box">
+
+			<!-- TIEU DE -->
+			<div class="product-panel-head">
+				<strong>Chỉnh sửa món ăn</strong>
+			</div>
+
+			<!-- FORM SUA MON AN -->
+			<form th:action="@{/admin/products/update}" method="post"
+				enctype="multipart/form-data" id="editProductForm">
+				<div class="product-form-body">
+
+					<!-- ID MON AN -->
+					<input type="hidden" id="editProductId" name="id">
+
+					<!-- TEN MON -->
+					<div class="product-form-field">
+						<label for="editProductName"> Tên món ăn * </label> <input
+							type="text" id="editProductName" name="name" maxlength="255"
+							required>
+					</div>
+
+					<!-- GIA BAN -->
+					<div class="product-form-field">
+						<label for="editProductPrice"> Giá bán (VNĐ) * </label> <input
+							type="number" id="editProductPrice" name="price" min="1"
+							step="any" required>
+					</div>
+
+					<!-- DANH MUC -->
+					<div class="product-form-field">
+						<label for="editProductCategory"> Danh mục món ăn * </label> <select
+							id="editProductCategory" name="categoryId" required>
+							<option value="">-- Chọn danh mục --</option>
+							<option th:each="category : ${categories}"
+								th:value="${category.id}" th:text="${category.name}">
+								Sushi</option>
+						</select>
+					</div>
+
+					<!-- MO TA -->
+					<div class="product-form-field">
+						<label for="editProductDescription"> Mô tả món ăn </label>
+						<textarea id="editProductDescription" name="description" rows="3"
+							maxlength="255"></textarea>
+					</div>
+
+					<!-- TRANG THAI -->
+					<div class="product-form-field">
+						<label for="editProductAvailable"> Trạng thái kinh doanh </label>
+						<select id="editProductAvailable" name="available">
+							<option value="true">Đang bán</option>
+							<option value="false">Tạm ngừng bán</option>
+						</select>
+					</div>
+
+					<!-- HINH ANH -->
+					<div class="product-form-field">
+						<label> Hình ảnh hiện tại </label> <img id="editProductPreview"
+							alt="Ảnh món ăn"
+							style="width: 130px; height: 110px; object-fit: cover; border: 1px solid #cfdae5; display: none;">
+						<span id="editProductNoImage" class="product-form-note">
+							Chưa có hình ảnh </span>
+
+					</div>
+
+					<!-- CHON ANH MOI -->
+					<div class="product-form-field">
+						<label for="editProductPhoto"> Chọn hình ảnh mới từ máy
+							tính </label> <input type="file" id="editProductPhoto" name="photo"
+							accept=".jpg,.jpeg,.png,.webp"> <small
+							class="product-form-note"> Không chọn ảnh mới thì giữ
+							nguyên ảnh cũ. Hỗ trợ JPG, PNG, WebP, tối đa 5MB. </small>
+
+					</div>
+
+				</div>
+
+				<!-- NUT CHUC NANG -->
+				<div class="product-modal-footer">
+					<button type="button" class="product-btn" id="cancelEditProduct">
+						Hủy</button>
+					<button type="submit" class="product-btn product-btn-primary">
+						Lưu thay đổi</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- ========================================
+     HOP THOAI XAC NHAN XOA MON AN
+     ======================================== -->
+
+	<div class="product-modal" id="deleteProductModal" role="dialog"
+		aria-modal="true" aria-labelledby="deleteProductTitle">
+
+		<div class="product-modal-box">
+
+			<!-- TIEU DE -->
+			<div class="product-panel-head">
+				<strong id="deleteProductTitle"> Xác nhận xóa món ăn </strong>
+			</div>
+
+			<!-- NOI DUNG -->
+			<div class="product-modal-body">
+
+				<p>Bạn có chắc chắn muốn xóa món ăn:</p>
+
+				<p style="font-weight: bold; color: #30485f;">
+					<span id="deleteProductName"></span>
+				</p>
+
+				<p style="color: #a63f3f;">Lưu ý: Món ăn sau khi xóa sẽ không
+					còn trong danh sách quản lý.</p>
+
+			</div>
+
+			<!-- FORM GUI YEU CAU XOA VE SPRING BOOT -->
+			<form th:action="@{/admin/products/delete}" method="post"
+				id="deleteProductForm">
+
+				<!-- ID MON AN CAN XOA -->
+				<input type="hidden" id="deleteProductId" name="id">
+
+				<!-- NUT CHUC NANG -->
+				<div class="product-modal-footer">
+
+					<button type="button" class="product-btn" id="cancelDeleteProduct">
+						Hủy</button>
+
+					<button type="submit" class="product-btn product-btn-primary"
+						id="confirmDeleteProduct">Xác nhận xóa</button>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<!-- ======================================== JAVASCRIPT ======================================== -->
+
+	<script>
+		// ========================================
+		// DONG HO ADMIN
+		// ========================================
+
+		function updateAdminClock() {
+			const now = new Date();
+			const date = [ String(now.getDate()).padStart(2, "0"),
+					String(now.getMonth() + 1).padStart(2, "0"),
+					now.getFullYear() ].join("-");
+			const time = [ String(now.getHours()).padStart(2, "0"),
+					String(now.getMinutes()).padStart(2, "0"),
+					String(now.getSeconds()).padStart(2, "0") ].join(":");
+			document.getElementById("adminClock").textContent = date + " "
+					+ time;
+		}
+
+		updateAdminClock();
+		setInterval(updateAdminClock, 1000);
+
+		// ========================================
+		// KHAI BAO CAC THANH PHAN
+		// ========================================
+
+		const productRows = Array.from(document
+				.querySelectorAll(".product-data-row"));
+
+		const productSearch = document.getElementById("productSearch");
+
+		const productCategoryFilter = document
+				.getElementById("productCategoryFilter");
+
+		const productStatusFilter = document
+				.getElementById("productStatusFilter");
+
+		const productEmptyRow = document.getElementById("productEmptyRow");
+
+		const productPrevPage = document.getElementById("productPrevPage");
+
+		const productNextPage = document.getElementById("productNextPage");
+
+		// Moi trang hien thi 10 mon an
+		const pageSize = 10;
+
+		let currentPage = 1;
+
+		// ========================================
+		// TIM KIEM, LOC VA PHAN TRANG
+		// ========================================
+
+		function renderProducts() {
+
+			const keyword = productSearch.value.trim().toLocaleLowerCase("vi");
+
+			const categoryId = productCategoryFilter.value;
+
+			const status = productStatusFilter.value;
+
+			// Loc danh sach mon an
+			const filtered = productRows.filter(function(row) {
+
+				const code = row.querySelector(".product-code").textContent
+						.toLocaleLowerCase("vi");
+
+				const name = row.querySelector(".product-name").textContent
+						.toLocaleLowerCase("vi");
+
+				const matchKeyword = code.includes(keyword)
+						|| name.includes(keyword);
+
+				const matchCategory = categoryId === "all"
+						|| row.dataset.category === categoryId;
+
+				const matchStatus = status === "all"
+						|| row.dataset.available === status;
+
+				return matchKeyword && matchCategory && matchStatus;
+
+			});
+
+			// Tinh tong so trang
+			const totalPages = Math.max(1, Math
+					.ceil(filtered.length / pageSize));
+
+			if (currentPage > totalPages) {
+				currentPage = totalPages;
+			}
+
+			// An tat ca mon an
+			productRows.forEach(function(row) {
+				row.style.display = "none";
+			});
+
+			// Lay 10 mon thuoc trang hien tai
+			const start = (currentPage - 1) * pageSize;
+
+			filtered.slice(start, start + pageSize).forEach(
+					function(row, index) {
+
+						row.style.display = "";
+
+						row.querySelector(".product-index").textContent = start
+								+ index + 1;
+
+					});
+
+			// Hien thi khi khong tim thay
+			productEmptyRow.style.display = filtered.length === 0 ? "" : "none";
+
+			// Cap nhat so ban ghi
+			document.getElementById("productRecordCount").textContent = "Hiển thị "
+					+ filtered.length + " món ăn";
+
+			// Cap nhat so trang
+			document.getElementById("productPageInfo").textContent = "Trang "
+					+ currentPage + "/" + totalPages;
+
+			document.getElementById("productCurrentPage").textContent = currentPage;
+
+			// Bat / tat nut chuyen trang
+			productPrevPage.disabled = currentPage
+			<= 1;
+            productNextPage.disabled = currentPage >= totalPages;
+		}
+
+		// ========================================
+		// SU KIEN TIM KIEM
+		// ========================================
+		productSearch.addEventListener("input", function() {
+			currentPage = 1;
+			renderProducts();
+
+		});
+
+		// ========================================
+		// SU KIEN LOC DANH MUC
+		// ========================================
+
+		productCategoryFilter.addEventListener("change", function() {
+			currentPage = 1;
+			renderProducts();
+		});
+
+		// ========================================
+		// SU KIEN LOC TRANG THAI
+		// ========================================
+		productStatusFilter.addEventListener("change", function() {
+			currentPage = 1;
+			renderProducts();
+		});
+
+		// ========================================
+		// NUT TRANG TRUOC
+		// ========================================
+		productPrevPage.addEventListener("click", function() {
+			if (currentPage > 1) {
+				currentPage--;
+				renderProducts();
+			}
+		});
+
+		// ========================================
+		// NUT TRANG SAU
+		// ========================================
+		productNextPage.addEventListener("click", function() {
+			currentPage++;
+			renderProducts();
+		});
+
+		// ========================================
+		// LAM MOI BO LOC
+		// ========================================
+		document.getElementById("resetProductFilters").addEventListener(
+				"click", function() {
+					productSearch.value = "";
+					productCategoryFilter.value = "all";
+					productStatusFilter.value = "all";
+					currentPage = 1;
+					renderProducts();
+				});
+
+		// Hien thi danh sach khi mo trang
+		renderProducts();
+
+		// ========================================
+		// XEM CHI TIET MON AN
+		// ========================================
+		const productDetailModal = document
+				.getElementById("productDetailModal");
+		document
+				.querySelectorAll(".product-detail-btn")
+				.forEach(
+						function(button) {
+							button
+									.addEventListener(
+											"click",
+											function() {
+												const row = button
+														.closest("tr");
+
+												// Lay ma mon
+												document
+														.getElementById("detailProductCode").textContent = row
+														.querySelector(".product-code").textContent
+														.trim();
+
+												// Lay ten mon
+												document
+														.getElementById("detailProductName").textContent = row
+														.querySelector(".product-name").textContent
+														.trim();
+
+												// Lay danh muc
+												document
+														.getElementById("detailProductCategory").textContent = row
+														.querySelector(".product-category-name").textContent
+														.trim();
+
+												// Lay gia ban
+												document
+														.getElementById("detailProductPrice").textContent = row
+														.querySelector(".product-price").textContent
+														.trim();
+
+												// Lay trang thai
+												document
+														.getElementById("detailProductStatus").textContent = row
+														.querySelector(".product-status").textContent
+														.trim();
+
+												// Lay mo ta
+												document
+														.getElementById("detailProductDescription").textContent = button.dataset.description
+														|| "Chưa có mô tả";
+
+												// Mo cua so chi tiet
+												productDetailModal.classList
+														.add("open");
+											});
+						});
+
+		// ========================================
+		// DONG HOP THOAI CHI TIET
+		// ========================================
+		function closeProductModal() {
+			productDetailModal.classList.remove("open");
+		}
+		document.getElementById("closeProductDetail").addEventListener("click",
+				closeProductModal);
+
+		// Nhan ben ngoai hop thoai
+		productDetailModal.addEventListener("click", function(event) {
+			if (event.target === productDetailModal) {
+				closeProductModal();
+			}
+
+		});
+
+		// Nhan ESC
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeProductModal();
+			}
+		});
+
+		// ========================================
+		// CHUC NANG THEM MON AN
+		// ========================================
+
+		// Lay cua so Them mon an
+		const addProductModal = document.getElementById("addProductModal");
+
+		// Lay nut Them mon
+		const openAddProduct = document.getElementById("openAddProduct");
+
+		// Lay nut Huy
+		const cancelAddProduct = document.getElementById("cancelAddProduct");
+
+		// Nhan nut + Them mon an
+		openAddProduct.addEventListener("click", function() {
+
+			// Xoa du lieu form cu
+			document.getElementById("addProductForm").reset();
+			photoPreview.style.display = "none";
+			photoPreview.removeAttribute("src");
+
+			// Mo cua so Them
+			addProductModal.classList.add("open");
+
+			// Dua con tro vao o Ten mon
+			document.getElementById("newProductName").focus();
+
+		});
+
+		// Ham dong cua so
+		function closeAddProductModal() {
+			addProductModal.classList.remove("open");
+		}
+
+		// Nhan Huy
+		cancelAddProduct.addEventListener("click", function() {
+			closeAddProductModal();
+		});
+
+		// Nhan ra ben ngoai cua so
+		addProductModal.addEventListener("click", function(event) {
+			if (event.target === addProductModal) {
+				closeAddProductModal();
+			}
+		});
+
+		// Nhan ESC de dong
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeAddProductModal();
+			}
+		});
+
+		// ========================================
+		// XEM TRUOC ANH KHI CHON TU MAY TINH
+		// ========================================
+		const photoInput = document.getElementById("newProductPhoto");
+		const photoPreview = document.getElementById("newProductPreview");
+
+		photoInput.addEventListener("change", function() {
+			// Lay file nguoi dung vua chon
+			const file = this.files[0];
+
+			// Xoa anh xem truoc neu khong chon file
+			photoPreview.style.display = "none";
+			photoPreview.removeAttribute("src");
+			if (!file) {
+				return;
+			}
+
+			// Kiem tra dinh dang
+			const allowedTypes = [ "image/jpeg", "image/png", "image/webp" ];
+			if (!allowedTypes.includes(file.type)) {
+				alert("Chỉ cho phép ảnh JPG, PNG hoặc WebP!");
+				this.value = "";
+				return;
+			}
+
+			// Kiem tra dung luong toi da 5MB
+			if (file.size > 5 * 1024 * 1024) {
+				alert("Hình ảnh không được vượt quá 5MB!");
+				this.value = "";
+				return;
+			}
+
+			// Doc file anh tu may tinh
+			const reader = new FileReader();
+			reader.onload = function(event) {
+
+				// Hien thi anh xem truoc
+				photoPreview.src = event.target.result;
+				photoPreview.style.display = "block";
+			};
+			reader.readAsDataURL(file);
+		});
+
+		// ========================================
+		// CHUC NANG SUA MON AN
+		// ========================================
+
+		// Lay hop thoai Sua
+		const editProductModal = document.getElementById("editProductModal");
+
+		const editProductPreview = document
+				.getElementById("editProductPreview");
+
+		const editProductNoImage = document
+				.getElementById("editProductNoImage");
+
+		const editProductPhoto = document.getElementById("editProductPhoto");
+
+		// Lay nut Huy
+		const cancelEditProduct = document.getElementById("cancelEditProduct");
+
+		// Gan su kien cho tat ca nut Sua
+		document
+				.querySelectorAll(".product-edit-btn")
+				.forEach(
+						function(button) {
+
+							button
+									.addEventListener(
+											"click",
+											function() {
+
+												// Lay thong tin mon an dang chon
+												const id = button.dataset.id;
+												const name = button.dataset.name;
+												const price = button.dataset.price;
+												const category = button.dataset.category;
+												const description = button.dataset.description
+														|| "";
+												const available = button.dataset.available;
+												const image = button.dataset.image
+														|| "";
+
+												// Xoa file anh duoc chon o lan truoc
+												editProductPhoto.value = "";
+
+												// Dua du lieu hien tai vao form
+												document
+														.getElementById("editProductId").value = id;
+
+												document
+														.getElementById("editProductName").value = name;
+
+												document
+														.getElementById("editProductPrice").value = price;
+
+												document
+														.getElementById("editProductCategory").value = category;
+
+												document
+														.getElementById("editProductDescription").value = description;
+
+												document
+														.getElementById("editProductAvailable").value = available;
+
+												// Hien thi anh hien tai
+												if (image.trim() !== "") {
+
+													let imageUrl = image.trim();
+
+													// Xu ly anh cu trong static/images
+													if (!imageUrl
+															.startsWith("/")
+															&& !imageUrl
+																	.startsWith("http://")
+															&& !imageUrl
+																	.startsWith("https://")) {
+
+														imageUrl = "/images/"
+																+ imageUrl;
+													}
+
+													editProductPreview.src = imageUrl;
+													editProductPreview.style.display = "block";
+													editProductNoImage.style.display = "none";
+
+												} else {
+
+													editProductPreview
+															.removeAttribute("src");
+													editProductPreview.style.display = "none";
+													editProductNoImage.style.display = "block";
+
+												}
+
+												// Mo cua so Sua
+												editProductModal.classList
+														.add("open");
+
+												document.getElementById(
+														"editProductName")
+														.focus();
+											});
+						});
+
+		// ========================================
+		// XEM TRUOC ANH MOI
+		// ========================================
+		editProductPhoto.addEventListener("change", function() {
+
+			const file = this.files[0];
+			if (!file) {
+				return;
+			}
+
+			const allowedTypes = [ "image/jpeg", "image/png", "image/webp" ];
+			if (!allowedTypes.includes(file.type)) {
+				alert("Chỉ cho phép ảnh JPG, PNG hoặc WebP!");
+				this.value = "";
+				return;
+			}
+
+			if (file.size > 5 * 1024 * 1024) {
+				alert("Ảnh không được vượt quá 5MB!");
+				this.value = "";
+				return;
+			}
+
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				editProductPreview.src = event.target.result;
+				editProductPreview.style.display = "block";
+				editProductNoImage.style.display = "none";
+			};
+			reader.readAsDataURL(file);
+		});
+
+		// ========================================
+		// DONG FORM SUA MON AN
+		// ========================================
+		function closeEditProductModal() {
+			editProductModal.classList.remove("open");
+		}
+
+		// Nhan Huy
+		cancelEditProduct.addEventListener("click", function() {
+			closeEditProductModal();
+		});
+
+		// Nhan ra ben ngoai
+		editProductModal.addEventListener("click", function(event) {
+			if (event.target === editProductModal) {
+				closeEditProductModal();
+			}
+		});
+
+		// Nhan ESC
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeEditProductModal();
+			}
+		});
+
+		// ========================================
+		// CHUC NANG XOA MON AN
+		// ========================================
+
+		// Lay hop thoai Xoa
+		const deleteProductModal = document
+				.getElementById("deleteProductModal");
+
+		// Lay noi hien thi ten mon
+		const deleteProductName = document.getElementById("deleteProductName");
+
+		// Lay input chua ID mon an
+		const deleteProductId = document.getElementById("deleteProductId");
+
+		// Lay nut Huy
+		const cancelDeleteProduct = document
+				.getElementById("cancelDeleteProduct");
+
+		// Lay form Xoa
+		const deleteProductForm = document.getElementById("deleteProductForm");
+
+		// Gan su kien cho tat ca nut Xoa
+		document.querySelectorAll(".product-delete-btn").forEach(
+				function(button) {
+
+					button.addEventListener("click", function() {
+
+						// Lay ID va ten mon an dang chon
+						const id = button.dataset.id;
+						const name = button.dataset.name;
+
+						// Gan thong tin vao hop thoai
+						deleteProductId.value = id;
+						deleteProductName.textContent = name;
+
+						// Mo hop thoai
+						deleteProductModal.classList.add("open");
+
+						// Dua con tro den nut Huy
+						cancelDeleteProduct.focus();
+					});
+				});
+
+		// ========================================
+		// DONG HOP THOAI XOA
+		// ========================================
+
+		function closeDeleteProductModal() {
+
+			deleteProductModal.classList.remove("open");
+
+		}
+
+		// Nhan nut Huy
+		cancelDeleteProduct.addEventListener("click", function() {
+
+			closeDeleteProductModal();
+
+		});
+
+		// Nhan ra ben ngoai hop thoai
+		deleteProductModal.addEventListener("click", function(event) {
+
+			if (event.target === deleteProductModal) {
+
+				closeDeleteProductModal();
+			}
+		});
+
+		// Nhan phim ESC
+		document.addEventListener("keydown", function(event) {
+
+			if (event.key === "Escape") {
+
+				closeDeleteProductModal();
+			}
+		});
+
+		// ========================================
+		// XAC NHAN GUI YEU CAU XOA
+		// ========================================
+
+		deleteProductForm.addEventListener("submit", function() {
+
+			// Ngan bam Xoa nhieu lan lien tuc
+			const confirmButton = document
+					.getElementById("confirmDeleteProduct");
+
+			confirmButton.disabled = true;
+			confirmButton.textContent = "Đang xóa...";
+		});
+	</script>
+
+</body>
+</html>

@@ -62,7 +62,17 @@
 	<header class="admin-topbar">
 		<!-- LOGO FOOD ORDER -->
 		<div class="admin-brand">
-			<div class="brand-icon">✳</div>
+			
+		<!-- LOGO RIENG CUA WEBSITE -->
+		<div class="brand-icon">
+		    <img th:src="@{/images/logo.png}"
+		         alt="Logo FoodOrder"
+		         style="width:100%;
+		                height:200%;
+		                object-fit:contain;
+		                display:block;">
+		</div>
+
 			<div>
 				<div class="brand-title">
 					Food<span>Order</span>
@@ -93,10 +103,24 @@
          2. MENU NGANG ADMIN
          ================================= -->
 	<nav class="admin-nav">
-		<a class="active" th:href="@{/admin}"> ▫ Tổng quan </a> <a href="#">
-			▤ Đơn hàng </a> <a href="#"> ▦ Danh mục </a> <a href="#"> ▣ Món ăn </a> <a
-			href="#"> ♙ Nhân viên </a> <a href="#"> ♙ Người dùng </a> <a href="#">
-			▦ Bàn ăn </a> <a href="#"> $ Thanh toán </a> <a href="#"> ▥ Báo cáo </a>
+		<a class="active"
+			th:href="@{/admin}"> ▫ Tổng quan </a> 
+		<a class=""
+			th:href="@{/admin/orders}"> ▤ Đơn hàng </a> 
+		<a class=""
+			th:href="@{/admin/categories}"> ▦ Danh mục </a> 
+		<a class=""
+			th:href="@{/admin/products}"> ▣ Món ăn </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Nhân viên </a> 
+		<a href="#"
+			onclick="return false;"> ♙ Người dùng </a> 
+		<a href="#"
+			onclick="return false;"> ▦ Bàn ăn </a> 
+		<a href="#"
+			onclick="return false;"> $ Thanh toán </a> 
+		<a href="#"
+			onclick="return false;"> ▥ Báo cáo </a>
 	</nav>
 	<!-- =================================
          3. NOI DUNG DASHBOARD
@@ -148,30 +172,20 @@
 
 
 		<!-- CHIA DASHBOARD THANH HAI COT -->
-
 		<div class="dashboard-columns">
-
-			<!-- =========================
-                 COT TRAI - BIEU DO
-                 ========================= -->
-
+		
+			<!-- ========================= COT TRAI - BIEU DO ========================= -->
 			<section class="dashboard-left">
 
 				<!-- BIEU DO DOANH THU THEO THANG -->
-
 				<div class="admin-panel">
-
 					<div class="panel-header">
-
 						<div>
 							<h2 class="panel-title">▥ Biểu đồ doanh thu theo tháng</h2>
-
 							<div class="panel-note">Doanh thu, chi phí và lợi nhuận của
 								cửa hàng</div>
 						</div>
-
 						<span class="panel-extra"> Năm 2026 </span>
-
 					</div>
 
 					<div class="panel-body">
@@ -181,6 +195,7 @@
 						</div>
 					</div>
 				</div>
+				
 				<!-- BIEU DO KINH DOANH THEO QUY -->
 				<div class="admin-panel">
 					<div class="panel-header">
@@ -189,7 +204,6 @@
 								▥ Biểu đồ kết quả kinh doanh theo quý <span
 									style="color: #08a351"> 2026 </span>
 							</h2>
-
 							<div class="panel-note">So sánh doanh thu theo từng quý
 								trong năm</div>
 						</div>
@@ -201,11 +215,9 @@
 						</div>
 					</div>
 				</div>
-
 			</section>
-			<!-- =========================
-                 COT PHAI - THONG KE
-                 ========================= -->
+			
+			<!-- ========================= COT PHAI - THONG KE ========================= -->
 			<section class="dashboard-right">
 				<!-- 6 O THONG KE DAU TIEN -->
 				<div class="stats-grid">
@@ -247,39 +259,26 @@
 
 
 					<!-- TONG MON AN -->
-
 					<div class="stat-card">
-
 						<div class="stat-icon stat-blue">♨</div>
-
 						<div>
 							<div class="stat-label">Món ăn</div>
-
 							<div class="stat-value"
 								th:text="${totalProducts != null ? totalProducts : 0}">0</div>
-
 							<div class="stat-description">Trong hệ thống</div>
 						</div>
-
 					</div>
 
-
 					<!-- DANH MUC -->
-
 					<div class="stat-card">
-
 						<div class="stat-icon stat-pink">▦</div>
-
 						<div>
 							<div class="stat-label">Danh mục</div>
-
 							<div class="stat-value"
 								th:text="${totalCategories != null ? totalCategories : 0}">
 								0</div>
-
 							<div class="stat-description">Nhóm món ăn</div>
 						</div>
-
 					</div>
 
 

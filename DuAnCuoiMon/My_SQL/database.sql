@@ -97,6 +97,11 @@ SELECT
         END
     ) AS hoan_thanh
 FROM food_orders WHERE YEAR(order_time) = 2026 GROUP BY MONTH(order_time) ORDER BY thang;
+-- kiểm tra toàn bộ đơn hàng
+SELECT *
+FROM food_orders
+ORDER BY order_time DESC;
+
 
 -- đối chíu với emtity của category
 create table categories (

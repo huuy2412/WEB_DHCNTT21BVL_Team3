@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Controller
 public class AdminCategoryController {
@@ -93,6 +94,56 @@ public class AdminCategoryController {
 			// Thong bao neu ten rong hoac bi trung
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
+		// Quay ve trang quan ly danh muc
+		return "redirect:/admin/categories";
+	}
+
+	// ========================================
+	// SUA THONG TIN DANH MUC
+	// ========================================
+
+	@PostMapping("/admin/categories/update")
+	public String updateCategory(@RequestParam("id") Long id, @RequestParam("name") String name,
+			@RequestParam(value = "description", defaultValue = "") String description,
+			RedirectAttributes redirectAttributes) {
+		try {
+			// Goi Service de cap nhat danh muc
+			categoryService.updateCategory(id, name, description);
+			// Thong bao cap nhat thanh cong
+			redirectAttributes.addFlashAttribute("success", "Cập nhật danh mục thành công!");
+		} catch (IllegalArgumentException e) {
+			// Thong bao neu co loi
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		}
+
+		// Quay ve trang quan ly danh muc
+		return "redirect:/admin/categories";
+	}
+
+	// ========================================
+	// XOA DANH MUC MON AN
+	// ========================================
+
+	@PostMapping("/admin/categories/delete")
+	public String deleteCategory(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+		try {
+
+			// Goi Service de xoa danh muc
+			categoryService.deleteCategory(id);
+
+			// Thong bao khi xoa thanh cong
+			redirectAttributes.addFlashAttribute("success", "Xóa danh mục thành công!");
+		} catch (IllegalArgumentException e) {
+			// Bao loi neu danh muc khong ton tai
+			// hoac danh muc dang co mon an
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+		} catch (DataIntegrityViolationException e) {
+			// Bao loi khi danh muc con du lieu lien ket
+			// trong MySQL
+			redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục vì còn dữ liệu liên kết!");
+		}
+
 		// Quay ve trang quan ly danh muc
 		return "redirect:/admin/categories";
 	}

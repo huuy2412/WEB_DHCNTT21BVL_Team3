@@ -1,0 +1,779 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard - FOOD ORDER</title>
+
+<!-- CSS rieng cua Admin -->
+<link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css">
+
+<style>
+/* Khung bieu do khi chua co du lieu */
+.chart-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 10px;
+	color: #8b9bad;
+	font-size: 12px;
+	background-color: #fff;
+	background-image: linear-gradient(#edf1f5 1px, transparent 1px),
+		linear-gradient(90deg, #edf1f5 1px, transparent 1px);
+	background-size: 100% 48px, 70px 100%;
+}
+
+.chart-message {
+	padding: 12px 18px;
+	background: rgba(255, 255, 255, 0.95);
+	border: 1px solid #dce3ec;
+	text-align: center;
+}
+
+.empty-table {
+	text-align: center;
+	color: #8b9bad;
+	padding: 24px !important;
+}
+
+.notification {
+	position: relative;
+	font-size: 18px;
+}
+
+.admin-action a {
+	color: white;
+}
+
+.admin-action a:hover {
+	color: #dbe7f2;
+}
+</style>
+</head>
+
+<body class="admin-page">
+	<!-- =================================
+         1. HEADER ADMIN
+         ================================= -->
+	<header class="admin-topbar">
+		<!-- LOGO FOOD ORDER -->
+		<div class="admin-brand">
+			<div class="brand-icon">✳</div>
+			<div>
+				<div class="brand-title">
+					Food<span>Order</span>
+				</div>
+				<div class="brand-subtitle">Hệ thống quản lý nhà hàng •
+					Restaurant Management</div>
+			</div>
+		</div>
+		<!-- TIM KIEM NHANH -->
+		<div class="admin-search">
+			<input type="search" placeholder="Tìm nhanh món ăn, đơn hàng"
+				disabled>
+			<button type="button" disabled>&#9906;</button>
+		</div>
+		<!-- CAC CHUC NANG BEN PHAI -->
+		<div class="admin-actions">
+			<div class="admin-action">
+				Hôm nay: &nbsp; <span id="adminClock" class="time"> </span>
+			</div>
+			<div class="admin-action">
+				<span class="notification"> &#9679; </span>
+			</div>
+			<div class="admin-action">⚙ Cài đặt</div>
+			<div class="admin-action">● Admin</div>
+		</div>
+	</header>
+	<!-- =================================
+         2. MENU NGANG ADMIN
+         ================================= -->
+	<nav class="admin-nav">
+		<a class="active" th:href="@{/admin}"> ▫ Tổng quan </a> <a href="#">
+			▤ Đơn hàng </a> <a href="#"> ▦ Danh mục </a> <a href="#"> ▣ Món ăn </a> <a
+			href="#"> ♙ Nhân viên </a> <a href="#"> ♙ Người dùng </a> <a href="#">
+			▦ Bàn ăn </a> <a href="#"> $ Thanh toán </a> <a href="#"> ▥ Báo cáo </a>
+	</nav>
+	<!-- =================================
+         3. NOI DUNG DASHBOARD
+         ================================= -->
+	<main class="admin-main">
+		<!-- TIEU DE VA BO LOC THANG -->
+		<div class="dashboard-heading">
+			<div>
+				<h1 class="dashboard-title">
+					▥ Biểu đồ kết quả kinh doanh <span class="year" id="dashboardYear">
+						2026 </span>
+				</h1>
+				<p class="dashboard-subtitle">Thống kê doanh thu, đơn hàng và
+					hoạt động nhà hàng theo thời gian thực</p>
+			</div>
+			<!-- CAC NUT THANG -->
+			<div class="month-filter">
+				<span class="month-filter-label" id="selectedMonthInfo">
+					Thống kê theo tháng </span>
+
+				<button type="button" class="month-btn" data-month="5">Tháng
+					5</button>
+
+				<button type="button" class="month-btn" data-month="6">Tháng
+					6</button>
+
+				<button type="button" class="month-btn" data-month="7">Tháng
+					7</button>
+
+				<button type="button" class="month-btn" data-month="8">Tháng
+					8</button>
+
+				<button type="button" class="month-btn" data-month="9">Tháng
+					9</button>
+
+				<button type="button" class="month-btn" data-month="10">Tháng
+					10</button>
+
+				<button type="button" class="month-btn" data-month="11">Tháng
+					11</button>
+
+				<button type="button" class="month-btn" data-month="12">Tháng
+					12</button>
+
+			</div>
+
+
+		</div>
+
+
+		<!-- CHIA DASHBOARD THANH HAI COT -->
+
+		<div class="dashboard-columns">
+
+			<!-- =========================
+                 COT TRAI - BIEU DO
+                 ========================= -->
+
+			<section class="dashboard-left">
+
+				<!-- BIEU DO DOANH THU THEO THANG -->
+
+				<div class="admin-panel">
+
+					<div class="panel-header">
+
+						<div>
+							<h2 class="panel-title">▥ Biểu đồ doanh thu theo tháng</h2>
+
+							<div class="panel-note">Doanh thu, chi phí và lợi nhuận của
+								cửa hàng</div>
+						</div>
+
+						<span class="panel-extra"> Năm 2026 </span>
+
+					</div>
+
+					<div class="panel-body">
+						<!-- BIEU DO DOANH THU THEO THANG -->
+						<div class="chart-area chart-month">
+							<canvas id="monthlyRevenueChart"></canvas>
+						</div>
+					</div>
+				</div>
+				<!-- BIEU DO KINH DOANH THEO QUY -->
+				<div class="admin-panel">
+					<div class="panel-header">
+						<div>
+							<h2 class="panel-title">
+								▥ Biểu đồ kết quả kinh doanh theo quý <span
+									style="color: #08a351"> 2026 </span>
+							</h2>
+
+							<div class="panel-note">So sánh doanh thu theo từng quý
+								trong năm</div>
+						</div>
+						<span class="panel-extra"> Năm 2026 </span>
+					</div>
+					<div class="panel-body">
+						<div class="chart-area chart-quarter">
+							<canvas id="quarterlyRevenueChart"></canvas>
+						</div>
+					</div>
+				</div>
+
+			</section>
+			<!-- =========================
+                 COT PHAI - THONG KE
+                 ========================= -->
+			<section class="dashboard-right">
+				<!-- 6 O THONG KE DAU TIEN -->
+				<div class="stats-grid">
+					<!-- TONG DON HANG -->
+					<div class="stat-card">
+						<div class="stat-icon stat-red">▤</div>
+						<div>
+							<div class="stat-label">Đơn hàng</div>
+							<div class="stat-value" id="kpiTotalOrders"
+								th:text="${totalOrders != null ? totalOrders : 0}">0</div>
+							<div class="stat-description">Tổng đơn hàng</div>
+						</div>
+					</div>
+
+					<!-- DON DANG XU LY -->
+					<div class="stat-card">
+						<div class="stat-icon stat-purple">◷</div>
+						<div>
+							<div class="stat-label">Đang xử lý</div>
+							<div class="stat-value" id="kpiProcessingOrders"
+								th:text="${processingOrders != null ? processingOrders : 0}">
+								0</div>
+							<div class="stat-description">Chờ hoàn thành</div>
+						</div>
+					</div>
+
+					<!-- DOANH THU -->
+
+					<div class="stat-card">
+						<div class="stat-icon stat-orange">$</div>
+						<div>
+							<div class="stat-label">Doanh thu</div>
+							<div class="stat-value" id="kpiTotalRevenue"
+								th:text="${totalRevenue != null ? #numbers.formatDecimal(totalRevenue, 1, 'POINT', 0, 'COMMA') + 'đ' : '0đ'}">
+								0đ</div>
+							<div class="stat-description">Doanh thu ghi nhận</div>
+						</div>
+					</div>
+
+
+					<!-- TONG MON AN -->
+
+					<div class="stat-card">
+
+						<div class="stat-icon stat-blue">♨</div>
+
+						<div>
+							<div class="stat-label">Món ăn</div>
+
+							<div class="stat-value"
+								th:text="${totalProducts != null ? totalProducts : 0}">0</div>
+
+							<div class="stat-description">Trong hệ thống</div>
+						</div>
+
+					</div>
+
+
+					<!-- DANH MUC -->
+
+					<div class="stat-card">
+
+						<div class="stat-icon stat-pink">▦</div>
+
+						<div>
+							<div class="stat-label">Danh mục</div>
+
+							<div class="stat-value"
+								th:text="${totalCategories != null ? totalCategories : 0}">
+								0</div>
+
+							<div class="stat-description">Nhóm món ăn</div>
+						</div>
+
+					</div>
+
+
+					<!-- KHACH HANG -->
+
+					<div class="stat-card">
+						<div class="stat-icon stat-green">♙</div>
+						<div>
+							<div class="stat-label">Khách hàng</div>
+							<div class="stat-value"
+								th:text="${totalCustomers != null ? totalCustomers : 0}">
+								0</div>
+							<div class="stat-description">Đã đăng ký</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- 2 O THONG KE BEN DUOI -->
+
+				<div class="stats-bottom">
+
+					<!-- BAN DANG PHUC VU -->
+					<div class="stat-card">
+						<div class="stat-icon stat-cyan">▦</div>
+						<div>
+							<div class="stat-label">Bàn đang phục vụ</div>
+							<div class="stat-value">
+								<span th:text="${servingTables != null ? servingTables : 0}">0</span>
+								/ <span th:text="${totalTables != null ? totalTables : 0}">0</span>
+							</div>
+							<div class="stat-description">Trong hệ thống</div>
+						</div>
+					</div>
+
+					<!-- DON HOAN THANH -->
+					<div class="stat-card">
+						<div class="stat-icon stat-green">✓</div>
+						<div>
+							<div class="stat-label">Đơn hoàn thành</div>
+							<div class="stat-value" id="kpiCompletedOrders"
+								th:text="${completedOrders != null ? completedOrders : 0}">
+								0</div>
+							<div class="stat-description">Tổng đơn hoàn thành</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- BANG DON HANG CAN XU LY -->
+				<div class="admin-panel">
+					<div class="panel-header">
+						<h2 class="panel-title">▤ Đơn hàng cần xử lý</h2>
+						<span class="panel-extra"> Xem tất cả → </span>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Mã đơn</th>
+								<th>Khách hàng</th>
+								<th>Tổng tiền</th>
+								<th>Trạng thái</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<!-- Khong co don hang can xu ly -->
+							<tr th:if="${#lists.isEmpty(pendingOrders)}">
+								<td colspan="4" class="empty-table">Hiện không có đơn hàng
+									cần xử lý.</td>
+							</tr>
+							<!-- Hien thi tung don hang -->
+							<tr th:each="order : ${pendingOrders}">
+								<!-- Ma don hang -->
+								<td th:text="${'DH' + #numbers.formatInteger(order.id, 3)}">
+									DH001</td>
+								<!-- Ten khach hang -->
+								<td
+									th:text="${order.customer != null ? order.customer.name : 'Khách tại quán'}">
+									Khách hàng</td>
+								<!-- Tong tien -->
+								<td
+									th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+									0đ</td>
+								<!-- Trang thai -->
+								<td><span class="status-label"
+									th:classappend="${order.status == 'PENDING' ? ' status-pending' : ' status-processing'}"
+									th:text="${order.status == 'PENDING' ? 'Chờ xác nhận' : 'Đang chuẩn bị'}">
+										Chờ xác nhận </span></td>
+							</tr>
+
+						</tbody>
+
+					</table>
+				</div>
+				<!-- BANG MON AN BAN CHAY -->
+				<div class="admin-panel">
+					<div class="panel-header">
+						<h2 class="panel-title">▦ Món ăn bán chạy</h2>
+						<span class="panel-extra"> Thống kê bán hàng </span>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>STT</th>
+								<th>Tên món ăn</th>
+								<th>Đã bán</th>
+								<th>Doanh thu</th>
+							</tr>
+						</thead>
+
+
+						<tbody>
+
+							<!-- Khong co mon an da ban -->
+							<tr th:if="${#lists.isEmpty(bestSellers)}">
+								<td colspan="4" class="empty-table">Chưa có dữ liệu món ăn
+									đã bán.</td>
+							</tr>
+
+							<!-- Danh sach mon an ban chay -->
+							<tr th:each="item, stt : ${bestSellers}">
+
+								<!-- So thu tu -->
+								<td th:text="${stt.count}">1</td>
+
+								<!-- Ten mon an -->
+								<td th:text="${item.productName}">Sushi cá hồi</td>
+
+								<!-- So luong da ban -->
+								<td th:text="${item.totalSold}">0</td>
+
+								<!-- Doanh thu cua mon -->
+								<td
+									th:text="${#numbers.formatDecimal(item.revenue, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+									0đ</td>
+
+							</tr>
+
+						</tbody>
+
+					</table>
+				</div>
+				<!-- BANG TRANG THAI BAN -->
+				<div class="admin-panel">
+					<div class="panel-header">
+						<h2 class="panel-title">▦ Thống kê trạng thái bàn</h2>
+						<span class="panel-extra"> Hôm nay </span>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Trạng thái</th>
+								<th>Số lượng</th>
+								<th>Ghi chú</th>
+							</tr>
+						</thead>
+
+
+						<tbody>
+
+							<!-- Chua co ban an -->
+							<tr th:if="${totalTables == 0}">
+								<td colspan="3" class="empty-table">Chưa có bàn ăn trong hệ
+									thống.</td>
+							</tr>
+							<!-- Ban dang phuc vu -->
+							<tr th:if="${totalTables > 0}">
+								<td>Đang phục vụ</td>
+								<td th:text="${servingTables}">0</td>
+								<td>Đang có khách dùng bữa</td>
+							</tr>
+							<!-- Ban trong -->
+							<tr th:if="${totalTables > 0}">
+								<td>Bàn trống</td>
+								<td th:text="${availableTables}">0</td>
+								<td>Sẵn sàng nhận khách</td>
+							</tr>
+							<!-- Trang thai khac -->
+							<tr th:if="${otherTables > 0}">
+								<td>Trạng thái khác</td>
+								<td th:text="${otherTables}">0</td>
+								<td>Bàn chưa thuộc hai trạng thái trên</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+		</div>
+	</main>
+	<!-- =================================
+         4. FOOTER ADMIN
+         ================================= -->
+	<footer class="admin-footer">
+		<span> © 2026 FOOD ORDER — Hệ thống quản lý nhà hàng </span> <span>
+			Dashboard Admin </span>
+	</footer>
+	<!-- =================================
+         5. DONG HO THOI GIAN
+         ================================= -->
+	<script>
+		function updateAdminClock() {
+			const now = new Date();
+			const day = String(now.getDate()).padStart(2, "0");
+			const month = String(now.getMonth() + 1).padStart(2, "0");
+			const year = now.getFullYear();
+			const hour = String(now.getHours()).padStart(2, "0");
+			const minute = String(now.getMinutes()).padStart(2, "0");
+			const second = String(now.getSeconds()).padStart(2, "0");
+			const clock = document.getElementById("adminClock");
+			clock.textContent = day + "-" + month + "-" + year + " " + hour
+					+ ":" + minute + ":" + second;
+
+			document.getElementById("dashboardYear").textContent = year;
+		}
+		// Hien thi ngay khi trang duoc mo
+		updateAdminClock();
+
+		// Cap nhat moi giay
+		setInterval(updateAdminClock, 1000);
+	</script>
+
+	<!-- Thu vien Chart.js -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+	<!-- Ve bieu do doanh thu theo thang -->
+	<script th:inline="javascript">
+		// Du lieu doanh thu tu Spring Boot
+		const monthlyRevenue =
+		/*[[${monthlyRevenue}]]*/[];
+		// Ten cac thang
+		const monthLabels = [ "Thg 01", "Thg 02", "Thg 03", "Thg 04", "Thg 05",
+				"Thg 06", "Thg 07", "Thg 08", "Thg 09", "Thg 10", "Thg 11",
+				"Thg 12" ];
+		// Lay vung ve bieu do
+		const canvas = document.getElementById("monthlyRevenueChart");
+		if (canvas && typeof Chart !== "undefined") {
+			const monthChart = new Chart(canvas, {
+				type : "bar",
+				data : {
+					labels : monthLabels,
+					datasets : [ {
+						label : "Doanh thu",
+						data : monthlyRevenue,
+						backgroundColor : "#67c2e0",
+						borderRadius : 0,
+						barPercentage : 0.55
+					} ]
+				},
+				options : {
+					responsive : true,
+					maintainAspectRatio : false,
+					plugins : {
+						legend : {
+							position : "top"
+						},
+						tooltip : {
+							callbacks : {
+								label : function(context) {
+									return "Doanh thu: "
+											+ context.parsed.y
+													.toLocaleString("vi-VN")
+											+ "đ";
+								}
+							}
+						}
+					},
+					scales : {
+						y : {
+							beginAtZero : true,
+							ticks : {
+								callback : function(value) {
+									if (value >= 1000000) {
+										return (value / 1000000) + "tr";
+									}
+									if (value >= 1000) {
+										return (value / 1000) + "k";
+									}
+									return value;
+								}
+							}
+						},
+						x : {
+							grid : {
+								display : false
+							}
+						}
+					}
+				}
+			});
+
+			// Lay cac nut chon thang
+			const monthButtons = document.querySelectorAll(".month-btn");
+
+			const currentMonth = new Date().getMonth() + 1;
+
+			const monthInfo = document.getElementById("selectedMonthInfo");
+
+			monthButtons.forEach(function(button) {
+
+				const month = Number(button.dataset.month);
+
+				// Khong cho chon thang trong tuong lai
+				if (month > currentMonth) {
+					button.disabled = true;
+					button.style.opacity = "0.45";
+					return;
+				}
+
+				button.addEventListener("click", function() {
+
+					// Doi mau nut duoc chon
+					monthButtons.forEach(function(btn) {
+						btn.classList.remove("active");
+					});
+
+					button.classList.add("active");
+
+					// Lam noi bat cot doanh thu duoc chon
+					const colors = monthChart.data.labels.map(function(label,
+							index) {
+						return index === month - 1 ? "#344e68" : "#67c2e0";
+					});
+
+					monthChart.data.datasets[0].backgroundColor = colors;
+
+					monthChart.update();
+
+					// Hien thi doanh thu cua thang duoc chon
+					const revenue = Number(monthlyRevenue[month - 1] || 0);
+
+					monthInfo.textContent = "Tháng " + month + ": "
+							+ revenue.toLocaleString("vi-VN") + "đ";
+
+				});
+
+			});
+
+			// Tu dong chon thang hien tai neu co nut
+			const currentButton = document
+					.querySelector('.month-btn[data-month="' + currentMonth
+							+ '"]');
+
+			if (currentButton) {
+				currentButton.click();
+			}
+
+		}
+	</script>
+
+	<!-- BIEU DO DOANH THU THEO QUY -->
+	<script th:inline="javascript">
+		// Lay du lieu 4 quy tu Spring Boot
+		const quarterlyRevenue =
+		/*[[${quarterlyRevenue}]]*/[];
+
+		const quarterCanvas = document.getElementById("quarterlyRevenueChart");
+
+		if (quarterCanvas && typeof Chart !== "undefined") {
+
+			new Chart(quarterCanvas, {
+
+				type : "bar",
+
+				data : {
+					labels : [ "Quý 1", "Quý 2", "Quý 3", "Quý 4" ],
+
+					datasets : [ {
+						label : "Doanh thu",
+						data : quarterlyRevenue,
+						backgroundColor : "#67c2e0",
+						borderRadius : 0,
+						barPercentage : 0.5
+					} ]
+				},
+
+				options : {
+					responsive : true,
+					maintainAspectRatio : false,
+
+					plugins : {
+						legend : {
+							position : "top"
+						},
+
+						tooltip : {
+							callbacks : {
+								label : function(context) {
+									return "Doanh thu: "
+											+ context.parsed.y
+													.toLocaleString("vi-VN")
+											+ "đ";
+								}
+							}
+						}
+					},
+
+					scales : {
+						y : {
+							beginAtZero : true,
+							ticks : {
+								callback : function(value) {
+									return (value / 1000000)
+											.toLocaleString("vi-VN")
+											+ "tr";
+								}
+							}
+						},
+
+						x : {
+							grid : {
+								display : false
+							}
+						}
+					}
+				}
+
+			});
+		}
+	</script>
+
+
+	<!-- CAP NHAT THONG KE KHI CHON THANG -->
+	<script th:inline="javascript">
+(function() {
+    // Lay du lieu 12 thang tu Spring Boot
+    const orderCounts =
+        /*[[${monthlyOrderCounts}]]*/ [];
+    const processingCounts =
+        /*[[${monthlyProcessingOrders}]]*/ [];
+    const completedCounts =
+        /*[[${monthlyCompletedOrders}]]*/ [];
+    const revenueCounts =
+        /*[[${monthlyRevenue}]]*/ [];
+
+    // Ham cap nhat cac o thong ke
+    function updateDashboardKpis(month) {
+        // Vi tri thang trong mang
+        const index = Number(month) - 1;
+        if (index < 0 || index >= 12) {
+            return;
+        }
+        // Lay so lieu cua thang duoc chon
+        const totalOrders =
+            Number(orderCounts[index] || 0);
+
+        const processingOrders =
+            Number(processingCounts[index] || 0);
+
+        const completedOrders =
+            Number(completedCounts[index] || 0);
+
+        const revenue =
+            Number(revenueCounts[index] || 0);
+
+        // Cap nhat tong don hang
+        document.getElementById("kpiTotalOrders")
+            .textContent = totalOrders.toLocaleString("vi-VN");
+
+        // Cap nhat don dang xu ly
+        document.getElementById("kpiProcessingOrders")
+            .textContent = processingOrders.toLocaleString("vi-VN");
+
+        // Cap nhat don hoan thanh
+        document.getElementById("kpiCompletedOrders")
+            .textContent = completedOrders.toLocaleString("vi-VN");
+
+        // Cap nhat doanh thu
+        document.getElementById("kpiTotalRevenue")
+            .textContent = revenue.toLocaleString("vi-VN") + "đ";
+
+    }
+
+    // Gan su kien cho cac nut chon thang
+    document.querySelectorAll(".month-btn[data-month]")
+        .forEach(function(button) {
+            button.addEventListener("click", function() {
+                const month = button.dataset.month;
+                updateDashboardKpis(month);
+            });
+        });
+
+    // Khi moi mo trang, hien thi thang dang chon
+    const activeButton =
+        document.querySelector(".month-btn.active[data-month]");
+
+    const initialMonth = activeButton
+        ? Number(activeButton.dataset.month)
+        : new Date().getMonth() + 1;
+
+    updateDashboardKpis(initialMonth);
+})();
+</script>
+
+</body>
+</html>

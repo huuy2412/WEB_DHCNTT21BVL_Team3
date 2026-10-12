@@ -1,0 +1,1117 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Quản lý danh mục - FOOD ORDER</title>
+
+<!-- Dung chung CSS voi Dashboard -->
+<link rel="stylesheet" th:href="@{/css/admin.css}">
+
+<style>
+/* GIAO DIEN RIENG CUA TRANG DANH MUC */
+.category-breadcrumb {
+	color: #8b9bad;
+	font-size: 11px;
+	margin-bottom: 12px;
+}
+
+.category-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 18px;
+}
+
+.category-title {
+	font-size: 21px;
+	color: #30485f;
+	font-weight: bold;
+	margin: 0 0 5px;
+}
+
+.category-subtitle {
+	font-size: 11px;
+	color: #8798a9;
+	margin: 0;
+}
+
+.category-year {
+	background: white;
+	border: 1px solid #d4dfe9;
+	padding: 9px 13px;
+	color: #6c8599;
+	font-size: 11px;
+}
+
+/* BON O THONG KE */
+.category-stats {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 17px;
+}
+
+.category-stat {
+	background: white;
+	border: 1px solid #d8e0ea;
+	min-height: 99px;
+	padding: 18px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.category-stat-icon {
+	width: 47px;
+	height: 47px;
+	background: #eef3f7;
+	border: 1px solid #cfdae5;
+	color: #557c9b;
+	font-size: 23px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.category-stat-label {
+	font-size: 12px;
+	color: #8498aa;
+	margin-bottom: 6px;
+}
+
+.category-stat-value {
+	font-size: 26px;
+	font-weight: bold;
+	color: #30485f;
+}
+
+/* KHUNG DANH SACH */
+.category-panel {
+	background: white;
+	border: 1px solid #d8e0ea;
+	margin-bottom: 12px;
+}
+
+.category-panel-header {
+	padding: 14px 15px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #dce3ec;
+}
+
+.category-panel-title {
+	font-size: 14px;
+	font-weight: bold;
+	color: #363f49;
+	margin: 0;
+}
+
+.category-panel-note {
+	font-size: 10px;
+	color: #91a8bd;
+}
+
+/* THANH CHUC NANG */
+.category-toolbar {
+	padding: 13px 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.category-toolbar-left, .category-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.category-btn {
+	border: 1px solid #cfdae5;
+	background: white;
+	color: #456b89;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 9px 13px;
+	border-radius: 0;
+	cursor: pointer;
+}
+
+.category-btn-primary {
+	background: #456f90;
+	border-color: #456f90;
+	color: white;
+}
+
+.category-btn:disabled {
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.category-search {
+	height: 31px;
+	width: 180px;
+	border: 1px solid #cfdae5;
+	border-radius: 0;
+	padding: 7px 10px;
+	font-size: 11px;
+	outline-color: #456f90;
+}
+
+.category-select {
+	height: 31px;
+	border: 1px solid #cfdae5;
+	border-radius: 0;
+	padding: 5px 10px;
+	background: white;
+	color: #526a80;
+	font-size: 11px;
+}
+
+/* BANG DANH MUC */
+.category-table-wrap {
+	overflow-x: auto;
+}
+
+.category-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 11px;
+}
+
+.category-table th {
+	background: #e7edf3;
+	color: #366d98;
+	padding: 11px 12px;
+	text-align: left;
+	border: 1px solid #d4dfe9;
+	font-weight: bold;
+}
+
+.category-table td {
+	padding: 12px;
+	border: 1px solid #e0e6ed;
+	color: #40556a;
+	height: 44px;
+}
+
+.category-table tbody tr:nth-child(even) {
+	background: #f7f9fb;
+}
+
+.category-table .category-name {
+	font-weight: bold;
+}
+
+.category-count {
+	display: inline-block;
+	padding: 4px 7px;
+	background: #eef3f7;
+	border: 1px solid #d8e0ea;
+	color: #607e97;
+}
+
+.category-row-actions {
+	display: flex;
+	gap: 5px;
+}
+
+.category-action-btn {
+	border: 1px solid #cddbe8;
+	background: white;
+	color: #376b95;
+	font-size: 10px;
+	padding: 5px 8px;
+	border-radius: 0;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.category-action-btn:hover:not(:disabled) {
+	background: #e9f2f8;
+}
+
+.category-action-btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+/* PHAN TRANG */
+.category-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 9px 14px;
+	color: #8a9eaf;
+	font-size: 10px;
+}
+
+.category-page-controls {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.category-page-btn {
+	padding: 5px 9px;
+	border: 1px solid #cfdae5;
+	background: white;
+	color: #567d9c;
+	cursor: pointer;
+}
+
+.category-page-btn.current {
+	background: #456f90;
+	color: white;
+}
+
+.category-page-btn:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+/* BA O THONG TIN PHIA DUOI */
+.category-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 11px;
+	padding: 13px;
+}
+
+.category-info-box {
+	background: #f8f9fb;
+	border: 1px solid #dce3eb;
+	padding: 16px 14px;
+	min-height: 80px;
+}
+
+.category-info-box h4 {
+	font-size: 12px;
+	color: #405d77;
+	margin: 0 0 8px;
+}
+
+.category-info-box p {
+	font-size: 11px;
+	color: #8295a6;
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* HOP XEM CHI TIET */
+.category-modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(21, 35, 50, 0.5);
+	z-index: 1000;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.category-modal.open {
+	display: flex;
+}
+
+.category-modal-box {
+	background: white;
+	border: 1px solid #cddbe8;
+	width: 100%;
+	max-width: 460px;
+}
+
+.category-modal-body {
+	padding: 18px;
+	font-size: 13px;
+	line-height: 2;
+}
+
+.category-modal-footer {
+	padding: 12px 18px;
+	border-top: 1px solid #dce3ec;
+	text-align: right;
+}
+
+@media ( max-width : 1000px) {
+	.category-stats {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.category-info-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media ( max-width : 600px) {
+	.category-stats {
+		grid-template-columns: 1fr;
+	}
+	.category-heading {
+		align-items: flex-start;
+		gap: 10px;
+	}
+	.category-toolbar-right {
+		flex-wrap: wrap;
+	}
+}
+
+/* FORM THEM DANH MUC */
+.category-form-body {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.category-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+}
+
+.category-form-field label {
+	font-size: 12px;
+	font-weight: bold;
+	color: #405d77;
+}
+
+.category-form-field input, .category-form-field textarea {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #cfdae5;
+	border-radius: 0;
+	padding: 10px 12px;
+	font-family: inherit;
+	font-size: 12px;
+	color: #40556a;
+	background: white;
+}
+
+.category-form-field input:focus, .category-form-field textarea:focus {
+	outline: 1px solid #456f90;
+	border-color: #456f90;
+}
+
+.category-form-field textarea {
+	resize: vertical;
+	min-height: 90px;
+}
+
+.required-mark {
+	color: #c34c4c;
+}
+
+.category-modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+/* THONG BAO KET QUA */
+.category-flash {
+	padding: 12px 15px;
+	font-size: 12px;
+	margin-bottom: 15px;
+	border: 1px solid;
+}
+
+.category-flash-success {
+	background: #edf7f0;
+	border-color: #a9d5b4;
+	color: #287344;
+}
+
+.category-flash-error {
+	background: #fff1f1;
+	border-color: #e5b6b6;
+	color: #a63f3f;
+}
+</style>
+</head>
+
+<body class="admin-page">
+
+	<!-- ================================
+         1. HEADER ADMIN
+         ================================ -->
+
+	<header class="admin-topbar">
+
+		<div class="admin-brand">
+			<div class="brand-icon">✳</div>
+
+			<div>
+				<div class="brand-title">
+					Food<span>Order</span>
+				</div>
+
+				<div class="brand-subtitle">Hệ thống quản lý nhà hàng •
+					Restaurant Management</div>
+			</div>
+		</div>
+
+		<div class="admin-search">
+			<input type="search" placeholder="Tìm nhanh món ăn, đơn hàng"
+				disabled>
+
+			<button type="button" disabled>&#9906;</button>
+		</div>
+
+		<div class="admin-actions">
+
+			<div class="admin-action">
+				Hôm nay: &nbsp; <span class="time" id="adminClock"></span>
+			</div>
+
+			<div class="admin-action">●</div>
+
+			<div class="admin-action">⚙ Cài đặt</div>
+
+			<div class="admin-action">● Admin</div>
+
+		</div>
+
+	</header>
+
+
+	<!-- ================================
+         2. MENU NGANG
+         ================================ -->
+
+	<nav class="admin-nav">
+
+		<a th:href="@{/admin}"> ▫ Tổng quan </a> <a href="#"
+			onclick="return false;"> ▤ Đơn hàng </a> <a class="active"
+			th:href="@{/admin/categories}"> ▦ Danh mục </a> <a href="#"
+			onclick="return false;"> ▣ Món ăn </a> <a href="#"
+			onclick="return false;"> ♙ Nhân viên </a> <a href="#"
+			onclick="return false;"> ♙ Người dùng </a> <a href="#"
+			onclick="return false;"> ▦ Bàn ăn </a> <a href="#"
+			onclick="return false;"> $ Thanh toán </a> <a href="#"
+			onclick="return false;"> ▥ Báo cáo </a>
+
+	</nav>
+
+
+	<!-- ================================
+         3. NOI DUNG TRANG DANH MUC
+         ================================ -->
+
+	<main class="admin-main">
+
+		<!-- DUONG DAN DIEU HUONG -->
+
+		<div class="category-breadcrumb">Trang chủ / Admin / Quản lý
+			danh mục</div>
+
+		<!-- TIEU DE TRANG -->
+
+		<div class="category-heading">
+
+			<div>
+				<h1 class="category-title">▦ QUẢN LÝ DANH MỤC MÓN ĂN</h1>
+
+				<p class="category-subtitle">Quản lý thông tin danh mục sử dụng
+					trong thực đơn của nhà hàng</p>
+			</div>
+
+			<div class="category-year" id="categoryYear">Năm 2026 ▾</div>
+
+		</div>
+
+
+		<!-- ============================
+             4 O THONG KE
+             ============================ -->
+
+		<div class="category-stats">
+			<!-- THONG BAO THEM DANH MUC THANH CONG -->
+			<div class="category-flash category-flash-success" th:if="${success}"
+				th:text="${success}" role="status">Thêm danh mục thành công!</div>
+			<!-- THONG BAO KHI CO LOI -->
+			<div class="category-flash category-flash-error" th:if="${error}"
+				th:text="${error}" role="alert">Tên danh mục đã tồn tại!</div>
+			<!-- TONG DANH MUC -->
+			<div class="category-stat">
+				<div class="category-stat-icon">▦</div>
+				<div>
+					<div class="category-stat-label">Tổng danh mục</div>
+					<div class="category-stat-value" th:text="${totalCategories}">
+						0</div>
+				</div>
+
+			</div>
+
+			<!-- TONG MON AN -->
+			<div class="category-stat">
+				<div class="category-stat-icon">▤</div>
+				<div>
+					<div class="category-stat-label">Tổng món ăn</div>
+					<div class="category-stat-value" th:text="${totalProducts}">
+						0</div>
+				</div>
+			</div>
+
+			<!-- DANH MUC CO MON -->
+			<div class="category-stat">
+				<div class="category-stat-icon">✓</div>
+				<div>
+					<div class="category-stat-label">Danh mục có món</div>
+					<div class="category-stat-value"
+						th:text="${categoriesWithProducts != null ? categoriesWithProducts : '—'}">
+						—</div>
+				</div>
+			</div>
+
+
+			<!-- DANH MUC TRONG -->
+			<div class="category-stat">
+				<div class="category-stat-icon">◷</div>
+				<div>
+					<div class="category-stat-label">Danh mục trống</div>
+					<div class="category-stat-value"
+						th:text="${emptyCategories != null ? emptyCategories : '—'}">
+						—</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ================================
+             BANG QUAN LY DANH MUC
+             ================================ -->
+		<section class="category-panel">
+			<!-- TIEU DE BANG -->
+			<div class="category-panel-header">
+				<h2 class="category-panel-title">▤ Danh sách danh mục món ăn</h2>
+				<span class="category-panel-note"> Dữ liệu từ MySQL </span>
+			</div>
+
+
+			<!-- THANH CHUC NANG -->
+			<div class="category-toolbar">
+				<div class="category-toolbar-left">
+					<button type="button" class="category-btn category-btn-primary"
+						id="openAddCategory">+ Thêm danh mục</button>
+					<button type="button" class="category-btn" id="refreshCategories">
+						↻ Làm mới</button>
+				</div>
+				
+				<div class="category-toolbar-right">
+					<label for="categorySearch"> Tìm kiếm: </label> <input
+						type="search" class="category-search" id="categorySearch"
+						placeholder="Tên hoặc mã danh mục..."> <select
+						class="category-select" id="categoryFilter">
+						<option value="all">Tất cả danh mục</option>
+					</select>
+
+				</div>
+
+			</div>
+
+
+			<!-- BANG DU LIEU -->
+			<div class="category-table-wrap">
+				<table class="category-table">
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Mã DM</th>
+							<th>Tên danh mục</th>
+							<th>Mô tả</th>
+							<th>Số món</th>
+							<th>Thao tác</th>
+						</tr>
+					</thead>
+
+					<tbody id="categoryTableBody">
+
+						<!-- LAP QUA DANH MUC MYSQL -->
+
+						<tr class="category-data-row"
+							th:each="category, stt : ${categories}">
+
+							<!-- STT -->
+
+							<td th:text="${stt.count}">1</td>
+
+							<!-- MA DANH MUC -->
+
+							<td class="category-id" th:text="${category.id}">1</td>
+
+							<!-- TEN DANH MUC -->
+
+							<td class="category-name" th:text="${category.name}">Sushi</td>
+
+							<!-- MO TA -->
+
+							<td class="category-description"
+								th:text="${category.description != null ? category.description : 'Chưa có mô tả'}">
+								Các loại sushi và cơm cuộn</td>
+
+							<!-- SO MON AN -->
+
+							<td><span class="category-count"
+								th:text="${productCounts == null ? '—' : productCounts[category.id]}">
+									— </span></td>
+
+							<!-- CAC NUT THAO TAC -->
+
+							<td>
+								<div class="category-row-actions">
+
+									<button type="button"
+										class="category-action-btn category-detail-btn">Chi
+										tiết</button>
+
+									<button type="button" class="category-action-btn"
+										title="Sẽ kết nối ở bước CRUD" disabled>Sửa</button>
+
+									<button type="button" class="category-action-btn"
+										title="Sẽ kết nối ở bước CRUD" disabled>Xóa</button>
+
+								</div>
+							</td>
+
+						</tr>
+
+
+						<!-- KHONG TIM THAY DANH MUC -->
+
+						<tr id="categoryEmptyRow" style="display: none;">
+
+							<td colspan="6"
+								style="text-align: center; padding: 25px; color: #8a9eaf;">
+								Không tìm thấy danh mục phù hợp.</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+
+
+			<!-- PHAN TRANG -->
+
+			<div class="category-pagination">
+
+				<span id="categoryRecordCount"> Hiển thị 0 bản ghi </span>
+
+				<div class="category-page-controls">
+
+					<span id="categoryPageText"> Trang 1/1 </span>
+
+					<button class="category-page-btn" id="categoryPrev" type="button">
+						‹</button>
+
+					<button class="category-page-btn current" id="categoryCurrent"
+						type="button" disabled>1</button>
+
+					<button class="category-page-btn" id="categoryNext" type="button">
+						›</button>
+
+				</div>
+
+			</div>
+
+		</section>
+
+
+		<!-- ================================
+             THONG TIN QUAN LY DANH MUC
+             ================================ -->
+
+		<section class="category-panel">
+
+			<div class="category-panel-header">
+
+				<h2 class="category-panel-title">▣ Thông tin quản lý danh mục</h2>
+
+			</div>
+
+			<div class="category-info-grid">
+
+				<div class="category-info-box">
+
+					<h4>Thêm danh mục mới</h4>
+
+					<p>Nhập tên và mô tả danh mục. ID sẽ được hệ thống tự tạo khi
+						lưu.</p>
+
+				</div>
+
+				<div class="category-info-box">
+
+					<h4>Chỉnh sửa danh mục</h4>
+
+					<p>Thay đổi tên hoặc mô tả mà không cần xóa các món ăn thuộc
+						danh mục.</p>
+
+				</div>
+
+				<div class="category-info-box">
+
+					<h4>Xóa danh mục</h4>
+
+					<p>Chỉ cho phép xóa danh mục chưa có món ăn để tránh ảnh hưởng
+						dữ liệu liên kết.</p>
+
+				</div>
+
+			</div>
+
+		</section>
+
+	</main>
+
+
+	<!-- ================================
+         FOOTER ADMIN
+         ================================ -->
+
+	<footer class="admin-footer">
+
+		<span> © 2026 FOOD ORDER — Hệ thống quản lý nhà hàng </span> <span>
+			Quản lý Danh mục </span>
+
+	</footer>
+
+
+	<!-- ================================
+         HOP THOAI CHI TIET DANH MUC
+         ================================ -->
+
+	<div class="category-modal" id="categoryModal">
+
+		<div class="category-modal-box">
+
+			<div class="category-panel-header">
+				<h2 class="category-panel-title">Chi tiết danh mục</h2>
+			</div>
+
+			<div class="category-modal-body">
+
+				<div>
+					<strong>Mã danh mục:</strong> <span id="detailId"></span>
+				</div>
+
+				<div>
+					<strong>Tên danh mục:</strong> <span id="detailName"></span>
+				</div>
+
+				<div>
+					<strong>Mô tả:</strong> <span id="detailDescription"></span>
+				</div>
+
+			</div>
+
+			<div class="category-modal-footer">
+
+				<button type="button" class="category-btn" id="closeCategoryModal">
+					Đóng</button>
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<!-- ================================
+     HOP THOAI THEM DANH MUC
+     ================================ -->
+
+	<div class="category-modal" id="addCategoryModal">
+
+		<div class="category-modal-box">
+
+			<!-- TIEU DE -->
+
+			<div class="category-panel-header">
+
+				<h2 class="category-panel-title">+ Thêm danh mục mới</h2>
+
+			</div>
+
+			<!-- FORM GUI DU LIEU VE SPRING BOOT -->
+
+			<form th:action="@{/admin/categories/add}" method="post"
+				id="addCategoryForm">
+
+				<div class="category-form-body">
+
+					<!-- TEN DANH MUC -->
+
+					<div class="category-form-field">
+
+						<label for="newCategoryName"> Tên danh mục <span
+							class="required-mark">*</span>
+						</label> <input type="text" id="newCategoryName" name="name"
+							placeholder="Ví dụ: Món tráng miệng" maxlength="255" required>
+
+					</div>
+
+					<!-- MO TA DANH MUC -->
+
+					<div class="category-form-field">
+
+						<label for="newCategoryDescription"> Mô tả danh mục </label>
+
+						<textarea id="newCategoryDescription" name="description" rows="4"
+							maxlength="255" placeholder="Nhập mô tả danh mục..."></textarea>
+
+					</div>
+
+				</div>
+
+				<!-- CAC NUT CHUC NANG -->
+
+				<div class="category-modal-footer">
+
+					<button type="button" class="category-btn" id="cancelAddCategory">
+						Hủy</button>
+
+					<button type="submit" class="category-btn category-btn-primary">
+						Lưu danh mục</button>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<!-- ================================
+         JAVASCRIPT
+         ================================ -->
+
+	<script>
+		// DONG HO ADMIN
+
+		function updateAdminClock() {
+
+			const now = new Date();
+
+			const date = [ String(now.getDate()).padStart(2, "0"),
+					String(now.getMonth() + 1).padStart(2, "0"),
+					now.getFullYear() ].join("-");
+
+			const time = [ String(now.getHours()).padStart(2, "0"),
+					String(now.getMinutes()).padStart(2, "0"),
+					String(now.getSeconds()).padStart(2, "0") ].join(":");
+
+			document.getElementById("adminClock").textContent = date + " "
+					+ time;
+
+			document.getElementById("categoryYear").textContent = "Năm "
+					+ now.getFullYear() + " ▾";
+		}
+
+		updateAdminClock();
+		setInterval(updateAdminClock, 1000);
+
+		// TIM KIEM VA PHAN TRANG
+
+		const categoryRows = Array.from(document
+				.querySelectorAll(".category-data-row"));
+
+		const categorySearch = document.getElementById("categorySearch");
+
+		const categoryEmptyRow = document.getElementById("categoryEmptyRow");
+
+		const categoryPrev = document.getElementById("categoryPrev");
+
+		const categoryNext = document.getElementById("categoryNext");
+
+		const pageSize = 10;
+
+		let currentPage = 1;
+
+		function renderCategories() {
+
+			const keyword = categorySearch.value.trim().toLocaleLowerCase("vi");
+
+			// Loc theo ma, ten va mo ta
+			const filtered = categoryRows.filter(function(row) {
+
+				const content = row.textContent.toLocaleLowerCase("vi");
+
+				return content.includes(keyword);
+			});
+
+			const totalPages = Math.max(1, Math
+					.ceil(filtered.length / pageSize));
+
+			if (currentPage > totalPages) {
+				currentPage = totalPages;
+			}
+
+			// An tat ca dong truoc
+			categoryRows.forEach(function(row) {
+				row.style.display = "none";
+			});
+
+			// Hien thi 10 dong thuoc trang hien tai
+			const start = (currentPage - 1) * pageSize;
+			const end = start + pageSize;
+
+			filtered.slice(start, end).forEach(function(row) {
+				row.style.display = "";
+			});
+
+			categoryEmptyRow.style.display = filtered.length === 0 ? ""
+					: "none";
+
+			document.getElementById("categoryRecordCount").textContent = "Hiển thị "
+					+ filtered.length + " bản ghi";
+
+			document.getElementById("categoryPageText").textContent = "Trang "
+					+ currentPage + "/" + totalPages;
+
+			document.getElementById("categoryCurrent").textContent = currentPage;
+			categoryPrev.disabled = currentPage <= 1;
+			categoryNext.disabled = currentPage >= totalPages;
+
+		}
+
+		categorySearch.addEventListener("input", function() {
+			currentPage = 1;
+			renderCategories();
+		});
+
+		categoryPrev.addEventListener("click", function() {
+			if (currentPage > 1) {
+				currentPage--;
+				renderCategories();
+			}
+		});
+
+		categoryNext.addEventListener("click", function() {
+			currentPage++;
+			renderCategories();
+		});
+
+		document.getElementById("refreshCategories").addEventListener("click",
+				function() {
+					window.location.reload();
+				});
+		renderCategories();
+
+		// XEM CHI TIET DANH MUC
+		const categoryModal = document.getElementById("categoryModal");
+		document
+				.querySelectorAll(".category-detail-btn")
+				.forEach(
+						function(button) {
+							button
+									.addEventListener(
+											"click",
+											function() {
+
+												const row = button
+														.closest("tr");
+
+												const id = row
+														.querySelector(".category-id").textContent
+														.trim();
+
+												const name = row
+														.querySelector(".category-name").textContent
+														.trim();
+
+												const description = row
+														.querySelector(".category-description").textContent
+														.trim();
+												document
+														.getElementById("detailId").textContent = id;
+												document
+														.getElementById("detailName").textContent = name;
+												document
+														.getElementById("detailDescription").textContent = description;
+												categoryModal.classList
+														.add("open");
+											});
+
+						});
+
+		function closeModal() {
+			categoryModal.classList.remove("open");
+		}
+
+		document.getElementById("closeCategoryModal").addEventListener("click",
+				closeModal);
+
+		categoryModal.addEventListener("click", function(event) {
+			if (event.target === categoryModal) {
+				closeModal();
+			}
+		});
+
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeModal();
+			}
+		});
+
+		// ========================================
+		// MO FORM THEM DANH MUC
+		// ========================================
+		// Lay cac thanh phan cua form
+		const addCategoryModal = document.getElementById("addCategoryModal");
+
+		const openAddCategory = document.getElementById("openAddCategory");
+
+		const cancelAddCategory = document.getElementById("cancelAddCategory");
+
+		const newCategoryName = document.getElementById("newCategoryName");
+
+		// Khi nhan nut + Them danh muc
+		openAddCategory.addEventListener("click", function() {
+
+			// Xoa du lieu cu trong form
+			document.getElementById("addCategoryForm").reset();
+
+			// Hien thi cua so
+			addCategoryModal.classList.add("open");
+
+			// Dua con tro vao o ten danh muc
+			newCategoryName.focus();
+
+		});
+
+		// Ham dong cua so
+		function closeAddCategoryModal() {
+			addCategoryModal.classList.remove("open");
+		}
+
+		// Nhan Huy de dong
+		cancelAddCategory.addEventListener("click", function() {
+			closeAddCategoryModal();
+		});
+
+		// Nhan ben ngoai hop thoai de dong
+		addCategoryModal.addEventListener("click", function(event) {
+			if (event.target === addCategoryModal) {
+				closeAddCategoryModal();
+			}
+		});
+
+		// Nhan ESC de dong
+		document.addEventListener("keydown", function(event) {
+			if (event.key === "Escape") {
+				closeAddCategoryModal();
+			}
+		});
+	</script>
+
+</body>
+</html>

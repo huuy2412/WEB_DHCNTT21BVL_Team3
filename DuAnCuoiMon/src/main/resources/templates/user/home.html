@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>FOOD ORDER - Trang chủ</title>
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<style>
+body {
+	font-family: Arial, sans-serif;
+	color: #12382b;
+}
+
+.navbar-brand {
+	font-size: 25px;
+	font-weight: bold;
+	color: #08753e;
+}
+
+.nav-link {
+	color: #26352e;
+}
+
+.nav-link:hover {
+	color: #08753e;
+}
+
+.hero {
+	background: #f5f5ee;
+	padding: 65px 0;
+}
+
+.hero h1 {
+	font-size: 43px;
+	font-weight: 800;
+}
+
+.hero img {
+	width: 100%;
+	height: 340px;
+	object-fit: cover;
+}
+
+.btn-food {
+	background: #08753e;
+	color: white;
+	border: none;
+	border-radius: 0;
+	padding: 12px 24px;
+}
+
+.btn-food:hover {
+	background: #075c32;
+	color: white;
+}
+
+footer {
+	background: #053b29;
+	color: white;
+	padding: 40px 0;
+}
+
+footer p {
+	color: #d4e3dc;
+}
+
+.btn, .form-control, .card {
+	border-radius: 0 !important;
+}
+
+/* THE MON AN */
+.product-card {
+	border: 1px solid #dddddd;
+	border-radius: 0;
+	overflow: hidden;
+}
+
+/* HINH ANH */
+.product-image {
+	width: 100%;
+	height: 190px;
+	object-fit: cover;
+	border-radius: 0;
+}
+
+/* NOI DUNG THE */
+.product-card .card-body {
+	padding: 12px;
+}
+
+/* TEN MON */
+.product-card h6 {
+	color: #12382b;
+	font-size: 16px;
+}
+
+/* MO TA */
+.product-description {
+	font-size: 13px;
+	color: #666666;
+	line-height: 1.5;
+	min-height: 40px;
+}
+
+/* GIA TIEN */
+.product-price {
+	font-size: 16px;
+	color: red;
+	font-weight: bold;
+}
+
+/* NUT THEM */
+.product-card .btn {
+	border-radius: 0;
+	font-size: 13px;
+}
+
+/* NUT LOC DANH MUC */
+.filter-btn {
+	background: white;
+	border: 1px solid #cccccc;
+	color: #12382b;
+	padding: 9px 18px;
+	font-size: 13px;
+	border-radius: 0;
+	cursor: pointer;
+}
+
+/* KHI DUOC CHON */
+.filter-btn.active {
+	background: #08753e;
+	border-color: #08753e;
+	color: white;
+}
+
+/* KHI RE CHUOT */
+.filter-btn:hover {
+	background: #08753e;
+	color: white;
+	border-color: #08753e;
+}
+</style>
+</head>
+
+<body>
+
+	<!-- HEADER -->
+	<nav class="navbar navbar-expand-lg bg-white border-bottom">
+		<div class="container-fluid px-4">
+
+			<a class="navbar-brand" th:href="@{/}"> 🍴 FOOD ORDER </a>
+
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#mainMenu">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="mainMenu">
+
+				<ul class="navbar-nav ms-auto gap-lg-3">
+					<li class="nav-item"><a class="nav-link" th:href="@{/}">
+							Trang chủ </a></li>
+					<li class="nav-item"><a class="nav-link" href="#"> Thực
+							đơn </a></li>
+					<li class="nav-item"><a class="nav-link" href="#"> Giỏ
+							hàng </a></li>
+					<li class="nav-item"><a class="nav-link" href="#"> Đăng
+							nhập </a></li>
+					<li class="nav-item"><a class="nav-link" href="#"> Đăng ký
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="#"> Thông
+							tin cá nhân </a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- BANNER TRANG CHỦ -->
+	<section class="hero">
+		<div class="container">
+			<div class="row align-items-center g-4">
+
+				<div class="col-lg-6">
+					<h1>
+						Món ngon mỗi ngày,<br> đặt nhanh tại nhà.
+					</h1>
+
+					<p class="my-4">Khám phá thực đơn đa dạng với sushi, sashimi,
+						cơm, mì Nhật và nhiều món ăn hấp dẫn khác.</p>
+
+					<a href="#mon-an" class="btn btn-food"> KHÁM PHÁ THỰC ĐƠN → </a>
+				</div>
+
+				<div class="col-lg-6">
+					<img
+						src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&amp;fit=crop&amp;w=1000"
+						alt="Món sushi hấp dẫn">
+				</div>
+
+			</div>
+		</div>
+	</section>
+
+	<!-- KHU VỰC THỰC ĐƠN -->
+
+	<!-- KHU VUC KHAM PHA MON AN -->
+	<section class="container py-4" id="mon-an">
+		<h2 class="fw-bold">KHÁM PHÁ MÓN ĂN</h2>
+		<p>Lựa chọn món ăn yêu thích của bạn từ thực đơn FOOD ORDER.</p>
+		<!-- BO LOC DANH MUC -->
+		<div class="d-flex flex-wrap gap-2 mb-3">
+
+			<button class="filter-btn active" data-category="Tất cả món">
+				Tất cả món</button>
+
+			<button class="filter-btn" data-category="Sushi">Sushi</button>
+
+			<button class="filter-btn" data-category="Sashimi">Sashimi</button>
+
+			<button class="filter-btn" data-category="Món nóng">Món nóng
+			</button>
+
+			<button class="filter-btn" data-category="Đồ uống">Đồ uống</button>
+
+			<button class="filter-btn" data-category="Combo">Combo</button>
+
+		</div>
+
+		<!-- Thong bao khi chua co mon an -->
+		<div th:if="${#lists.isEmpty(products)}"
+			class="alert alert-light border">Hiện chưa có món ăn nào được
+			hiển thị.</div>
+		<!-- Danh sach mon an -->
+		<div class="row g-3">
+			<!-- Lap qua tung mon an -->
+
+			<div class="col-lg-3 col-md-4 col-sm-6 product-item"
+				th:each="product : ${products}"
+				th:attr="data-category=${product.category != null ? product.category.name : 'Khác'}">
+
+				<div class="card h-100 product-card">
+					<!-- Hinh anh mon an -->
+					<img th:src="${product.image}" class="card-img-top product-image"
+						alt="Hình ảnh món ăn">
+					<!-- Khong co hinh anh -->
+					<div
+						th:if="${product.image == null or #strings.isEmpty(product.image)}"
+						class="product-image d-flex align-items-center justify-content-center bg-light text-secondary">
+						Chưa có ảnh</div>
+					<div class="card-body d-flex flex-column">
+						<!-- Danh muc mon an -->
+						<small class="text-secondary"
+							th:text="${product.category != null ? product.category.name : 'Món ăn'}">
+						</small>
+						<!-- Ten mon an -->
+						<h6 class="fw-bold mt-2" th:text="${product.name}"></h6>
+						<!-- Mo ta mon an -->
+						<p class="product-description" th:text="${product.description}">
+						</p>
+						<div
+							class="mt-auto d-flex justify-content-between align-items-center gap-2">
+							<!-- Gia tien -->
+							<span class="product-price"
+								th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 0, 'COMMA') + 'đ'}">
+							</span>
+							<!-- Nut them gio hang: lam sau -->
+							<button type="button" class="btn btn-food btn-sm" disabled>
+								Thêm</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="text-center mt-4">
+			<!-- Se lien ket trang thuc don sau -->
+			<span class="btn btn-outline-success rounded-0"> XEM TOÀN BỘ
+				THỰC ĐƠN → </span>
+		</div>
+	</section>
+
+
+	<!-- FOOTER -->
+	<footer>
+		<div class="container">
+			<div class="row g-4">
+
+				<div class="col-md-3">
+					<h4>FOOD ORDER</h4>
+					<p>Món ngon mỗi ngày, đặt nhanh tại nhà.</p>
+				</div>
+
+				<div class="col-md-3">
+					<h6>THÔNG TIN LIÊN HỆ</h6>
+					<p>Địa chỉ: Trường đại học công nghiệp thành phố HCM</p>
+					<p>SĐT: 0987770530</p>
+					<p>Email: 25764671.y@Student.iuh.edu.vn</p>
+				</div>
+
+				<div class="col-md-3">
+					<h6>HỆ THỐNG CHI NHÁNH</h6>
+					<p>Quận 12: công viên phần mềm quang trung</p>
+					<p>An Giang: đường Phan Đình Phùng, phường Châu Đốc</p>
+				</div>
+
+				<div class="col-md-3">
+					<h6>KẾT NỐI CHÚNG TÔI</h6>
+					<p>Facebook</p>
+					<p>Instagram</p>
+					<p>TikTok</p>
+					<p>Zalo</p>
+				</div>
+
+			</div>
+		</div>
+	</footer>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+	</script>
+	<script>
+	
+    // Lay tat ca nut loc danh muc
+    const filterButtons =
+        document.querySelectorAll(".filter-btn");
+    // Lay tat ca mon an
+    const products =
+        document.querySelectorAll(".product-item");
+    // Xu ly khi nguoi dung bam nut
+    filterButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            // Lay danh muc duoc chon
+            const category = this.dataset.category;
+            // Bo trang thai active cua cac nut
+            filterButtons.forEach(btn => {
+                btn.classList.remove("active");
+            });
+            // Danh dau nut hien tai
+            this.classList.add("active");
+            // Loc danh sach mon an
+            products.forEach(product => {
+                const productCategory =
+                    product.dataset.category;
+                if (category === "Tất cả món"
+                    || category === productCategory) {
+                    product.classList.remove("d-none");
+                } else {
+
+                    product.classList.add("d-none");
+                }
+            });
+        });
+    });
+	</script>
+
+</body>
+</html>

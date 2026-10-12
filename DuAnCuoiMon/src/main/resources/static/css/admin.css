@@ -1,0 +1,440 @@
+/* ===============================
+   GIAO DIEN ADMIN FOOD ORDER
+   =============================== */
+* {
+	box-sizing: border-box;
+}
+
+body.admin-page {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	color: #34495e;
+	background: #edf0f6;
+}
+
+a {
+	text-decoration: none;
+}
+
+/* HEADER ADMIN */
+.admin-topbar {
+	min-height: 55px;
+	background: #344e68;
+	color: white;
+	display: flex;
+	align-items: center;
+	padding: 0 18px;
+	gap: 22px;
+}
+
+.admin-brand {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	min-width: 268px;
+}
+
+.brand-icon {
+	width: 34px;
+	height: 34px;
+	border: 2px solid #dce8f0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 23px;
+}
+
+.brand-title {
+	font-size: 22px;
+	font-weight: bold;
+	color: white;
+}
+
+.brand-title span {
+	color: #a9d642;
+}
+
+.brand-subtitle {
+	font-size: 10px;
+	color: #cbd8e3;
+}
+
+.admin-search {
+	display: flex;
+	height: 29px;
+	width: 255px;
+}
+
+.admin-search input {
+	width: 100%;
+	border: 1px solid #b9c8d6;
+	padding: 5px 9px;
+	outline: none;
+	font-size: 11px;
+}
+
+.admin-search button {
+	width: 35px;
+	background: #dbe7f2;
+	border: 1px solid #b9c8d6;
+	color: #344e68;
+	cursor: pointer;
+}
+
+.admin-actions {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+	height: 55px;
+}
+
+.admin-action {
+	height: 100%;
+	padding: 0 13px;
+	border-left: 1px solid #526a80;
+	display: flex;
+	align-items: center;
+	color: white;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.admin-action .time {
+	color: #ffd447;
+}
+
+/* MENU NGANG */
+.admin-nav {
+	display: flex;
+	align-items: stretch;
+	background: #fafafa;
+	border-bottom: 1px solid #d3dbe5;
+	min-height: 36px;
+	overflow-x: auto;
+}
+
+.admin-nav a {
+	color: #344e68;
+	padding: 11px 13px;
+	border-right: 1px solid #e0e5eb;
+	font-weight: bold;
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+.admin-nav a:hover {
+	background: #e8eff5;
+}
+
+.admin-nav a.active {
+	background: #e6eef5;
+	color: #11669a;
+	border-bottom: 3px solid #247caf;
+}
+
+/* NOI DUNG DASHBOARD */
+.admin-main {
+	padding: 20px;
+	min-height: calc(100vh - 125px);
+}
+
+.dashboard-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 15px;
+	margin-bottom: 12px;
+}
+
+.dashboard-title {
+	font-size: 18px;
+	font-weight: bold;
+	color: #30485f;
+	margin: 0 0 5px;
+}
+
+.dashboard-title .year {
+	color: #08a351;
+}
+
+.dashboard-subtitle {
+	color: #6b9abb;
+	font-size: 11px;
+	font-style: italic;
+	margin: 0;
+}
+
+/* NUT LOC THANG */
+.month-filter {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-wrap: wrap;
+}
+
+.month-filter-label {
+	margin-right: 10px;
+	color: #7c8c9b;
+	font-size: 11px;
+}
+
+.month-btn {
+	background: #a8b8c8;
+	border: none;
+	color: white;
+	padding: 9px 11px;
+	font-size: 11px;
+	font-weight: bold;
+	cursor: pointer;
+	border-radius: 0;
+}
+
+.month-btn:hover, .month-btn.active {
+	background: #344e68;
+}
+
+/* CHIA HAI COT DASHBOARD */
+.dashboard-columns {
+	display: grid;
+	grid-template-columns: 1fr 1.02fr;
+	gap: 14px;
+}
+
+.dashboard-left, .dashboard-right {
+	min-width: 0;
+}
+
+/* KHUNG BIEU DO VA BANG */
+.admin-panel {
+	background: white;
+	border: 1px solid #d8e0ea;
+	margin-bottom: 12px;
+}
+
+.panel-header {
+	padding: 11px 12px;
+	border-bottom: 1px solid #dce3ec;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.panel-title {
+	font-size: 13px;
+	font-weight: bold;
+	margin: 0;
+	color: #343a40;
+}
+
+.panel-note {
+	font-size: 10px;
+	color: #5392b6;
+	font-style: italic;
+	margin-top: 5px;
+}
+
+.panel-extra {
+	font-size: 10px;
+	color: #8da6bb;
+}
+
+.panel-body {
+	padding: 12px;
+}
+
+/* BIEU DO */
+.chart-area {
+	position: relative;
+	width: 100%;
+}
+
+.chart-month {
+	height: 370px;
+}
+
+.chart-quarter {
+	height: 265px;
+}
+
+.chart-area canvas {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+/* CAC O THONG KE */
+.stats-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 11px;
+	margin-bottom: 11px;
+}
+
+.stats-bottom {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 11px;
+	margin-bottom: 11px;
+}
+
+.stat-card {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	background: white;
+	border: 1px solid #d8e0ea;
+	min-height: 86px;
+	padding: 15px;
+}
+
+.stat-icon {
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	font-size: 23px;
+}
+
+.stat-red {
+	background: #f14e48;
+}
+
+.stat-purple {
+	background: #974bec;
+}
+
+.stat-orange {
+	background: #ff9d08;
+}
+
+.stat-blue {
+	background: #219bd1;
+}
+
+.stat-pink {
+	background: #ed4097;
+}
+
+.stat-green {
+	background: #12a56c;
+}
+
+.stat-cyan {
+	background: #08a5ba;
+}
+
+.stat-label {
+	font-size: 12px;
+	color: #485565;
+}
+
+.stat-value {
+	font-size: 24px;
+	font-weight: bold;
+	color: #30485f;
+	margin: 3px 0;
+}
+
+.stat-description {
+	font-size: 10px;
+	color: #91a1b0;
+}
+
+/* BANG DU LIEU */
+.admin-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 11px;
+}
+
+.admin-table th {
+	background: #e7edf3;
+	color: #0872b9;
+	text-align: left;
+	font-weight: bold;
+	padding: 8px 10px;
+	border: 1px solid #d4dde7;
+}
+
+.admin-table td {
+	padding: 8px 10px;
+	border: 1px solid #dce3eb;
+}
+
+.admin-table tbody tr:nth-child(even) {
+	background: #f7f9fb;
+}
+
+/* NHAN TRANG THAI */
+.status-label {
+	display: inline-block;
+	padding: 4px 8px;
+	font-size: 10px;
+}
+
+.status-pending {
+	background: #fff1d8;
+	color: #ab6c13;
+}
+
+.status-processing {
+	background: #e2effb;
+	color: #2875a5;
+}
+
+.status-done {
+	background: #dff6e9;
+	color: #14884c;
+}
+
+/* FOOTER ADMIN */
+.admin-footer {
+	background: #fafafa;
+	border-top: 1px solid #d8e0ea;
+	padding: 12px 20px;
+	display: flex;
+	justify-content: space-between;
+	color: #8b9bad;
+	font-size: 10px;
+}
+
+/* MAN HINH NHO */
+@media ( max-width : 1100px) {
+	.dashboard-columns {
+		grid-template-columns: 1fr;
+	}
+	.dashboard-heading {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.admin-search {
+		display: none;
+	}
+}
+
+@media ( max-width : 650px) {
+	.admin-topbar {
+		padding: 10px;
+		flex-wrap: wrap;
+	}
+	.admin-brand {
+		min-width: 0;
+	}
+	.admin-actions {
+		height: auto;
+		margin-left: 0;
+	}
+	.stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.stats-bottom {
+		grid-template-columns: 1fr;
+	}
+	.admin-main {
+		padding: 10px;
+	}
+}
